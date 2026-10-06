@@ -1,0 +1,54 @@
+UnsaidBox feedback forms
+
+Local feature routes:
+/templates — public previews; no account required to try a template
+/dashboard/forms — personal forms, templates and private results
+/dashboard/forms/new?template=course-feedback — template-based editor
+/f/[id] — anonymous sender form (active links only)
+/admin/forms — separate administrator oversight; no private answer access
+
+Database setup:
+Install prisma/migrations/20261007010000_feedback_forms/migration.sql into the
+dedicated unsaidbox database using a database administrator. The application
+account should retain its existing DML-only permissions. This additive SQL
+creates FeedbackForm, FeedbackEntry and FeedbackAnswer and their foreign keys.
+Do not run schema push, reset, or migrations against the old website database.
+Do not rerun a partially applied migration blindly; inspect which tables exist.
+No deployment or production environment changes are included in this work.
+
+Product and privacy rules:
+- Six templates; text, single-choice (2–8 options), and ratings (1–5).
+- Up to 12 questions; each text answer up to 3,000 characters.
+- Explicit form branding upload; no private profile photo is copied or exposed.
+- Draft first. Publishing activates a share link, never Explore/profile listing.
+- Publishing locks questions and sharing policy. Duplicate to change either.
+- Appearance and thank-you text remain editable. Pause/disable/resume separately.
+- Each submission is private. Optional sharing permission is unchecked by default.
+- Share cards for text answers require both form policy and sender permission.
+- Public sender forms do not load Analytics; production submissions use reCAPTCHA.
+- Responses request no name/email/login; do not promise immunity from technical
+  logging, self-identification, screenshots or a recipient copying private words.
+- Database counters and unique request keys guard duplicate submissions.
+- Ratings and choice summaries are computed across all answers; response lists
+  are paginated, newest first. Empty optional answers are excluded from averages.
+- Owner queries are account-scoped. Separate administrators see usage metadata
+  and can pause a form, but cannot read private questions/answers in this console.
+- Deleting a form requires its link to be disabled plus the existing DELETE modal.
+
+Verification after installing tables:
+1. Sign in; preview a template, edit questions, add a choice and a rating.
+2. Save draft; confirm /f/[id] and its image return 404 while inactive.
+3. Publish; copy the link; submit from a signed-out phone/browser.
+4. Verify required validation, optional skipped answers, numeric summaries,
+   preserved fields on validation errors, and retry deduplication.
+5. With sharing enabled, submit once with permission and once without it.
+   Verify share cards are available only for the permitted text answer; direct
+   share URLs for private-only answers must return 404.
+6. Verify account B cannot view/edit/delete account A's forms or answers.
+7. Pause responses, then disable the link; confirm both server submission gates.
+8. Check admin pause/unblock audit events; unblock must not resume collection.
+9. Duplicate, edit the copy, and verify original answers/questions are unchanged.
+10. Review phone/desktop layout, keyboard navigation, confirmation modals and PNG.
+
+Not included: AI questions, branching logic, multi-select, public result pages,
+CSV exports, automated email notifications for form entries, billing restrictions.

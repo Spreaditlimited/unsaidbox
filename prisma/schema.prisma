@@ -67,6 +67,7 @@ model Account {
   avatar             AccountAvatar?
   emailPreference    EmailPreference?
   emailDeliveries    EmailDelivery[]
+  feedbackForms      FeedbackForm[]
 }
 
 model EmailPreference {
@@ -183,4 +184,94 @@ model AuditEvent {
   action String @db.VarChar(80)
   targetId String @db.VarChar(30)
   createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id String @id @default(cuid()) @db.VarChar(30)
+  slug String @unique @db.VarChar(160)
+  title String @db.VarChar(180)
+  excerpt String @db.VarChar(500)
+  contentHtml String @db.MediumText
+  authorName String @db.VarChar(100)
+  category String @db.VarChar(80)
+  seoTitle String @db.VarChar(180)
+  seoDescription String @db.VarChar(320)
+  imageAlt String @db.VarChar(300)
+  // Publication is time-gated at every public query, including images and sitemap.
+  published Boolean @default(false)
+  publishAt DateTime?
+  revision Int @default(1)
+  imageLock String? @db.VarChar(64)
+  imageLockedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  image BlogImage?
+  slugs BlogSlug[]
+  @@index([published, publishAt])
+}
+
+model BlogSlug {
+  slug String @id @db.VarChar(160)
+  postId String @db.VarChar(30)
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  @@index([postId])
+}
+
+model BlogImage {
+  postId String @id @db.VarChar(30)
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  image Bytes @db.MediumBlob
+  version String @db.VarChar(32)
+  updatedAt DateTime @updatedAt
+}
+
+model FeedbackForm {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  title String @db.VarChar(160)
+  description String @db.VarChar(600)
+  thankYou String @db.VarChar(300)
+  templateId String @db.VarChar(40)
+  questions Json
+  theme String @default("lavender") @db.VarChar(20)
+  allowSharing Boolean @default(false)
+  // Once first published, the question schema and sharing promise are immutable.
+  locked Boolean @default(false)
+  linkActive Boolean @default(false)
+  acceptingResponses Boolean @default(false)
+  blocked Boolean @default(false)
+  revision Int @default(1)
+  responseCount Int @default(0)
+  // Explicit form branding, never implicitly copied from a private profile photo.
+  image Bytes? @db.Blob
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  entries FeedbackEntry[]
+  @@index([accountId, createdAt])
+}
+
+model FeedbackEntry {
+  id String @id @default(cuid()) @db.VarChar(30)
+  formId String @db.VarChar(30)
+  form FeedbackForm @relation(fields: [formId], references: [id], onDelete: Cascade)
+  requestKey String @db.VarChar(36)
+  // Explicit optional sender consent, recorded independently on every submission.
+  shareAllowed Boolean @default(false)
+  createdAt DateTime @default(now())
+  answers FeedbackAnswer[]
+  @@unique([formId, requestKey])
+  @@index([formId, createdAt])
+}
+
+model FeedbackAnswer {
+  id String @id @default(cuid()) @db.VarChar(30)
+  entryId String @db.VarChar(30)
+  entry FeedbackEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  questionId String @db.VarChar(50)
+  label String @db.VarChar(240)
+  type String @db.VarChar(10)
+  textValue String? @db.Text
+  numberValue Int?
+  @@unique([entryId, questionId])
 }

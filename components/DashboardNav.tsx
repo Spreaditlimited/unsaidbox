@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Icon } from "./ui/Icon";
+import { TemplateContinuation } from "./forms/TemplateContinuation";
 
 export function DashboardNav({
   section,
@@ -9,7 +10,7 @@ export function DashboardNav({
   section: string;
 }) {
   const pathname = usePathname();
-  const active = pathname.startsWith("/admin")
+  const active = pathname.startsWith("/dashboard/forms") ? "forms" : pathname.startsWith("/admin")
     ? "admin"
     : pathname.includes("/settings")
       ? "settings"
@@ -19,6 +20,7 @@ export function DashboardNav({
           ? "inbox"
           : section;
   const items = [
+    { id: "forms", label: "Forms & feedback", href: "/dashboard/forms", icon: "article" as const },
     {
       id: "overview",
       label: "Overview",
@@ -56,6 +58,7 @@ export function DashboardNav({
           {item.label}
         </Link>
       ))}
+      <TemplateContinuation />
     </nav>
   );
 }

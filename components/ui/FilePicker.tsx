@@ -5,9 +5,13 @@ import { useId, useRef } from "react";
 export function FilePicker({
   onChoose,
   disabled,
+  label = "Choose photo",
+  help = "JPG, PNG or WebP. Up to 2 MB. Photos are centre-cropped to a square.",
 }: {
   onChoose: (file: File) => void;
   disabled?: boolean;
+  label?: string;
+  help?: string;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const id = useId();
@@ -20,7 +24,7 @@ export function FilePicker({
         id={id}
         accept="image/jpeg,image/png,image/webp"
         disabled={disabled}
-        aria-label="Choose profile photo"
+        aria-label={label}
         onChange={(event) => {
           const file = event.target.files?.[0];
           if (file) onChoose(file);
@@ -34,10 +38,10 @@ export function FilePicker({
         onClick={() => input.current?.click()}
         aria-describedby={`${id}-help`}
       >
-        Choose photo
+        {label}
       </button>
       <p className="fine" id={`${id}-help`}>
-        JPG, PNG or WebP. Up to 2 MB. Photos are centre-cropped to a square.
+        {help}
       </p>
     </div>
   );

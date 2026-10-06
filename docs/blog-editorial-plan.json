@@ -1,0 +1,169 @@
+{
+  "status": "First three original long-form articles written; daily publication approved on 2026-10-07. Remaining twelve are briefs, not finished articles.",
+  "startDate": "2026-10-07",
+  "timeZone": "Europe/London",
+  "cadence": "First article on release, subsequent completed articles daily after review.",
+  "note": "Target: fifteen articles. Only completed, reviewed articles with covers are scheduled. CMS is authoritative for actual publication status.",
+  "research": {
+    "targetMarkets": [
+      "United States",
+      "United Kingdom",
+      "Canada",
+      "Australia"
+    ],
+    "excludedMarkets": [
+      "Nigeria"
+    ],
+    "sources": [
+      "tools-us.csv",
+      "tools-uk.csv",
+      "tools-ca.csv",
+      "tools-au.csv",
+      "audience-us.csv",
+      "audience-uk.csv",
+      "audience-ca.csv",
+      "audience-au.csv",
+      "education-us.csv",
+      "education-uk.csv",
+      "education-ca.csv",
+      "education-au.csv"
+    ],
+    "period": "2025-09-01 to 2026-08-31",
+    "limitations": [
+      "Exports contain coarse estimates; blank values are not zero.",
+      "Monthly columns are empty; no trend claims are supported.",
+      "Advertising competition is not organic ranking difficulty.",
+      "Related keywords may overlap and must not be summed as unique demand.",
+      "Final topic selection requires expanded ideas and search-intent review; overlapping guides may be merged.",
+      "Country labels come from the user's export filenames; demand does not guarantee ranking."
+    ],
+    "strongestObservedSeeds": [
+      {
+        "keyword": "anonymous feedback form",
+        "us": 5000,
+        "uk": 500
+      },
+      {
+        "keyword": "anonymous questions",
+        "us": 500,
+        "uk": 500
+      },
+      {
+        "keyword": "anonymous q&a",
+        "us": 500,
+        "uk": 500
+      },
+      {
+        "keyword": "anonymous question box",
+        "us": 500,
+        "uk": 50
+      },
+      {
+        "keyword": "anonymous questions to ask",
+        "us": 500,
+        "uk": 50
+      },
+      {
+        "keyword": "course evaluation questions",
+        "us": 500,
+        "uk": 50
+      },
+      {
+        "keyword": "relationship questions to ask",
+        "us": 5000,
+        "uk": 500,
+        "caution": "Broad relationship intent may not convert to audience-question collection."
+      }
+    ]
+  },
+  "articles": [
+    {
+      "order": 1,
+      "title": "How to Create an Anonymous Feedback Form People Can Trust",
+      "status": "written",
+      "source": "docs/blog-launch-content.mjs"
+    },
+    {
+      "order": 2,
+      "title": "‘Ask Me an Anonymous Question’: Create a Link Your Audience Can Use",
+      "status": "written",
+      "source": "docs/blog-launch-content.mjs"
+    },
+    {
+      "order": 3,
+      "title": "35 Course Evaluation Questions for Honest, Useful Student Feedback",
+      "status": "written",
+      "source": "docs/blog-launch-content.mjs"
+    },
+    {
+      "order": 4,
+      "title": "50 Anonymous Questions to Ask Your Followers",
+      "status": "brief"
+    },
+    {
+      "order": 5,
+      "title": "How to Create an Anonymous Question Box",
+      "status": "brief"
+    },
+    {
+      "order": 6,
+      "title": "How to Run an Anonymous Q&A with Your Audience",
+      "status": "brief"
+    },
+    {
+      "order": 7,
+      "title": "20 Open-Ended Course Evaluation Questions That Get Useful Answers",
+      "status": "brief"
+    },
+    {
+      "order": 8,
+      "title": "How to Set Up an Anonymous Suggestion Box for Your Community",
+      "status": "brief"
+    },
+    {
+      "order": 9,
+      "title": "25 Training Feedback Questions to Ask After a Workshop",
+      "status": "brief"
+    },
+    {
+      "order": 10,
+      "title": "30 Questions to Ask Your Followers for Honest Feedback",
+      "status": "brief"
+    },
+    {
+      "order": 11,
+      "title": "How to Collect Anonymous Questions from Facebook and WhatsApp",
+      "status": "brief"
+    },
+    {
+      "order": 12,
+      "title": "30 Relationship Questions for Your Next Audience Q&A",
+      "status": "brief"
+    },
+    {
+      "order": 13,
+      "title": "How to Share Anonymous Responses Without Taking Screenshots",
+      "status": "brief"
+    },
+    {
+      "order": 14,
+      "title": "Anonymous vs Confidential Feedback: What’s the Difference?",
+      "status": "brief"
+    },
+    {
+      "order": 15,
+      "title": "How to Moderate Anonymous Questions and Responses Safely",
+      "status": "brief"
+    }
+  ],
+  "dailyTime": "09:00",
+  "editorialStandard": [
+    "Answer the immediate question before promoting the product.",
+    "Original examples, copyable wording and concrete next steps.",
+    "Explain how to interpret responses and act on them.",
+    "Verify product instructions; never invent statistics, results, testimonials or features.",
+    "Anonymous-to-recipient is not absolute untraceability.",
+    "Use primary sources where needed; target distinct intent rather than repetitive keyword guides.",
+    "Review mobile/desktop rendering and covers before publication."
+  ]
+}

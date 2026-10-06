@@ -1,4 +1,6 @@
 const paths = {
+  image: "M3 3h18v18H3z M3 16l6-6 5 5 3-3 4 4 M16 7h.01",
+  article: "M5 3h14v18H5z M8 7h8 M8 11h8 M8 15h5",
   overview: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
   inbox: "M4 4h16l2 11v5H2v-5L4 4z M2 15h6l2 3h4l2-3h6",
   question:

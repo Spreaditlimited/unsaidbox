@@ -18,6 +18,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <Link href="/cookies">Cookies</Link>
           <Link href="/start">Create your box</Link>
           <Link href="/explore">Explore threads</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/templates">Form templates</Link>
         </nav>
         <p className="fine">
           Thoughtful words. Shared with intention.

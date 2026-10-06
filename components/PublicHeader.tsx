@@ -20,8 +20,9 @@ export function PublicHeader() {
       <nav id="public-navigation" className={open ? "public-navigation is-open" : "public-navigation"} aria-label="Main navigation" onClick={() => setOpen(false)}>
         <Link href="/#how-it-works">How it works</Link>
         <Link href="/explore">Explore</Link>
+        <Link href="/templates">Templates</Link>
+        <Link href="/blog">Blog</Link>
         <Link href="/dashboard">My box</Link>
-        <Link href="/contact">Contact</Link>
       </nav>
       <div className="public-header-actions">
         <Link className="button small" href="/start">Your own box <Arrow /></Link>

@@ -1,0 +1,33 @@
+UnsaidBox: expanded keyword research
+
+Google Ads > Tools > Keyword Planner > Discover new keywords > Start with keywords.
+Run each batch below separately. These are research seeds, not validated article titles.
+Use English, Google only, and one country at a time: United States, United Kingdom, Australia.
+Remove default locations, including Nigeria, before selecting the intended country.
+For direct comparison with the original exports, use September 2025 through August 2026.
+Leave the optional website filter empty for this discovery pass.
+Download all keyword ideas as CSV, not the campaign forecast. No ad campaign needs to be launched.
+Keep average monthly searches, competition and bid columns; include monthly history if available.
+Name files unsaidbox-ideas-[tools|prompts|education]-[us|uk|au].csv.
+Three batches across three countries = nine exports. Start with tools-US if doing this in stages.
+Other English-speaking countries can be researched later; do not combine locations initially.
+
+TOOLS AND COLLECTION
+anonymous feedback form, anonymous feedback tool, anonymous question box, anonymous question app, anonymous questions link, anonymous q&a, ask anonymous questions
+
+AUDIENCE QUESTION IDEAS
+anonymous questions to ask, questions to ask your followers, relationship questions to ask, community feedback questions, questions to ask coaching clients, anonymous survey questions
+
+EDUCATION AND HONEST FEEDBACK
+course evaluation questions, online course feedback questions, student feedback questions, anonymous student feedback, how to get honest feedback, anonymous feedback
+
+Evaluation after export:
+- Preserve country and date settings; blanks are not zero.
+- Prioritize relevance to anonymous audience collection over raw volume.
+- Do not sum close variants as distinct demand or interpret ad competition as SEO difficulty.
+- Review search intent for each shortlisted cluster before choosing a blog vs product landing page.
+- Merge overlapping topics; evaluate relationship keywords for audience/creator intent.
+- Keep activation and safety articles even when they have no measured search volume, clearly labelled as such.
+- Do not invent trend claims when monthly history is missing.
+
+Google's guide: https://support.google.com/google-ads/answer/7337243?hl=en

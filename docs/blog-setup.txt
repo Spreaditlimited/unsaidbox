@@ -1,0 +1,82 @@
+UnsaidBox blog setup
+
+Release preparation: core CMS and feedback forms verified end to end on 2026-10-07.
+The three blog tables and three feedback tables are installed in the dedicated database.
+First editorial batch: docs/blog-launch-content.mjs. The wider plan distinguishes
+finished articles from briefs; CMS state is authoritative for publication times.
+
+1. Install the additive migration in the dedicated unsaidbox database:
+   prisma/migrations/20261007000000_blog/migration.sql
+   It creates BlogPost, BlogSlug and BlogImage only. It does not change existing user data.
+   Use the database administrator for schema installation; do not broaden the app user's privileges.
+   Do not use db push, reset, or run all historical migrations against the already-installed live database.
+
+2. The app runtime needs SELECT/INSERT/UPDATE/DELETE on the three new tables.
+   Existing unsaidbox.* scoped grants already cover them.
+   Restart the dev server after regenerating the Prisma client (npm run db:generate).
+
+3. For OpenAI image generation, configure server-only values:
+   UNSAIDBOX_OPENAI_API_KEY
+   UNSAIDBOX_OPENAI_IMAGE_MODEL
+   Choose a GPT Image model available to that project's API key which supports
+   the Image API, 1536x1024, medium quality and base64 image output.
+   At the user's explicit request, local configuration reuses Tochukwu Tech's
+   OpenAI credential and image-model setting under the UnsaidBox variable names.
+   No database or other service credentials were copied. Both sites share OpenAI billing.
+   The two OpenAI settings have also been added to the linked UnsaidBox Production
+   environment for this release. Generating editorial covers incurs normal API charges.
+   Manual cover uploads work independently of OpenAI.
+
+Routes:
+   /admin/blog: search/filter/list, cover generation icon
+   /admin/blog/new: editor
+   /admin/blog/:id/preview: administrator-only preview
+   /blog: public journal
+   /blog/:slug: public article
+   /blog/feed: RSS
+   /sitemap.xml: public blog URLs only
+
+Publication:
+   Drafts are private. Saving a schedule requires a future UTC date/time.
+   Every public query checks published=true AND publishAt <= server time.
+   All public blog routes are dynamic; no cron or manual visit is required to activate a schedule.
+   Readers see the article on their next request after its publication time.
+   This does not mean Google will index it immediately.
+   Unpublishing hides the article, its old slug redirects, and its cover endpoint.
+   Previously downloaded images cannot be recalled.
+   Generating/replacing a cover does not alter publication status.
+   Delete is allowed only after returning to draft.
+
+SEO/privacy:
+   Blog pages override the site's default noindex. Robots allows the editorial
+   namespace and static assets; other areas retain their previous exclusion.
+   Articles include canonical, Open Graph/Twitter, BlogPosting structured data.
+   Slug history redirects only while its article is public.
+   Google Analytics for editorial URLs remains opt-in; queries and form content are not sent.
+
+Storage:
+   Covers are re-encoded to 1600x900 WebP, stripped of metadata and capped at 700 KB.
+   They are stored in the dedicated DB like the existing profile assets, in their own
+   table and fetched separately from post lists. No external storage service is provisioned.
+   A future high-traffic media/CDN migration may be appropriate; public media is currently
+   no-store so unpublishing takes effect without an image cache continuing to serve it.
+
+Verification before release:
+   npm test
+   npm run build
+   npm run typecheck
+   With tables installed, sign into administration and exercise draft, cover upload,
+   preview, publish, schedule, unpublish and delete with a clearly marked test article.
+   Verify a signed-out browser sees 404 for drafts/future articles and their images.
+   Test one paid image generation only after the dedicated credentials are configured.
+
+Not part of this release:
+   AI-written article drafts, inline image uploads, revision history/rollback,
+   custom category/author administration, billing, or automatic social posting.
+   Paystack and Stripe are the selected future billing providers.
+   Legal owner supplied by the user: Tochukwu Tech and AI Academy Limited (United Kingdom).
+
+Reference workflows inspected:
+   Sure Imports admin blog list and /api/marketing/blog-image: generate -> store -> attach.
+   Tochukwu Tech internal blog list and lib/blog-automation.ts: same, with progress and revalidation.
+   UnsaidBox keeps this list action, with isolated storage and administrator authorization.

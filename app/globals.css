@@ -526,9 +526,10 @@ p + p {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--surface, #fff);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   color: var(--ink);
   cursor: pointer;
 }
