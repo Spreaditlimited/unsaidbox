@@ -1,6 +1,6 @@
 UnsaidBox deployment setup
 
-Intended private GitHub repository: SpreaditLimited/unsaidbox
+GitHub repository: SpreaditLimited/unsaidbox (main pushed and Vercel Git connected)
 Vercel team: tochukwu-nkwochas-projects
 Vercel project: unsaidbox (prj_hj6f1UVHZzQikHow32P9w4RpPdmy)
 Domains: unsaidbox.com and www.unsaidbox.com
@@ -15,17 +15,19 @@ Production configuration:
 - Existing email encryption key retained so queued payloads remain readable.
 - CAPTCHA site-key spelling normalized to GOOGLE_CAPTCHA_SITE_KEY in Vercel.
 - No production secrets assigned to Preview or Development.
-- UNSAIDBOX_DATABASE_URL deliberately NOT uploaded: local URL uses a Mac tunnel
-  and an absolute Mac certificate path, neither usable from deployed functions.
+- UNSAIDBOX_DATABASE_URL uploaded as a Production Secret on 2026-10-06.
+  The public router at 195.35.29.41:3307 passed a read-only strict-TLS check.
+  Dedicated database/account and encryption confirmed; 14 tables present.
+- Vercel runtime resolves the bundled certificates/mysql-ca.pem trust anchor.
+  Local .env and SSH tunnel configuration are unchanged.
+- Router certificate expires 2027-10-06; arrange renewal before that date.
 
 Before release:
-1. Create the private GitHub repo once SpreaditLimited GitHub access is connected;
-   push reviewed main and connect it to this Vercel project.
-2. Establish production MySQL connectivity without the Mac tunnel. Keep strict
-   certificate verification and the dedicated unsaidbox_app database account.
-   Obtain approval before any paid network add-on or broader server exposure.
-3. Ensure the public CA certificate is bundled and referenced by a runtime-valid
-   path, then upload the verified production database URL as a Production Secret.
+1. GitHub, Vercel Git connection, public TLS router and production secrets prepared.
+   Public 3307 was explicitly approved instead of purchasing paid networking.
+2. Keep strict certificate verification and the dedicated unsaidbox_app account.
+   Never change the existing website's MySQL listener or certificates.
+3. Preserve local tunnel configuration unless a direct local connection is requested.
 4. Configure a secured scheduled email retry worker; after-response processing
    alone is not a reliable retry scheduler. Confirm cron capability and plan limits.
 5. Stage and verify production authentication, CAPTCHA, database access and email
@@ -39,4 +41,17 @@ vercel.json regenerates Prisma before building; generated files are not tracked.
 No automatic migrations or seeds run in production builds.
 The public CA certificate is not a private key. Never commit server/CA private keys.
 
-This file records preparation, not a claim of a successful deployment.
+Deployment ad32cfc is READY on Vercel (2026-10-06):
+https://unsaidbox-9llsjpv59-tochukwu-nkwochas-projects.vercel.app
+HTTP checks passed: homepage, login, admin/login, database-backed Explore (200).
+Signed-out admin and personal dashboards redirect to their respective logins (307).
+63 automated tests, type checking and local build passed before staging.
+No runtime error logs returned during the bounded post-deploy check.
+Full browser sign-in, production CAPTCHA and email flow remain to be verified on
+the custom domain after DNS. Scheduled email retry worker remains outstanding.
+
+Hostinger DNS records verified against Vercel on 2026-10-06 (not applied):
+A @ 216.150.1.1
+A @ 216.150.16.1
+CNAME www d53a5a9548b8da88.vercel-dns-016.com
+Replace only parking website records. Preserve email records and nameservers.
