@@ -25,6 +25,6 @@ const config: NextConfig = {
 export default function nextConfig(phase: string): NextConfig {
   return {
     ...config,
-    distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next" : ".next-production",
+    distDir: process.env.VERCEL === "1" || phase === PHASE_DEVELOPMENT_SERVER ? ".next" : ".next-production",
   };
 }
