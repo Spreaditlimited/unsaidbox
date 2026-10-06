@@ -3,6 +3,7 @@ import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 
 const config: NextConfig = {
   poweredByHeader: false,
+  outputFileTracingIncludes: { "/*": ["./certificates/mysql-ca.pem"] },
   experimental: { serverActions: { bodySizeLimit: "3mb" } },
   async headers() {
     return [
