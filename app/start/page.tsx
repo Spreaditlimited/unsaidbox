@@ -74,8 +74,7 @@ export default function Start() {
       </p>
       <div className="auth-testing-note">
         <p>
-          Testing release. Accounts and messages use the live UnsaidBox
-          database. Confirm your email before collecting messages. Account
+          Confirm your email before collecting messages. Account
           emails come from hello@unsaidbox.com.
         </p>
       </div>

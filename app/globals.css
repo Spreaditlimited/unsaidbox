@@ -497,6 +497,7 @@ p + p {
   padding-inline: 8px;
 }
 .site-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -511,6 +512,50 @@ p + p {
 }
 .site-header nav a:hover {
   color: var(--indigo);
+}
+.public-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.public-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  color: var(--ink);
+  cursor: pointer;
+}
+.public-menu-toggle:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 3px;
+}
+@media (max-width: 1000px) {
+  .public-menu-toggle { display: inline-flex; }
+  .site-header nav.public-navigation {
+    display: none;
+    position: absolute;
+    inset: calc(100% + 8px) 0 auto;
+    width: auto;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 16px 40px #20203814;
+    z-index: 40;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 15px;
+  }
+  .site-header nav.public-navigation.is-open { display: flex; }
+  .public-navigation a { padding: 12px; border-radius: 8px; }
+  .public-navigation a:hover { background: var(--lavender); }
 }
 .site-footer {
   display: flex;
@@ -1478,8 +1523,8 @@ fieldset {
     width: calc(100% - 40px);
   }
   .site-header {
-    flex-wrap: wrap;
-    gap: 14px;
+    flex-wrap: nowrap;
+    gap: 8px;
     padding-block: 18px;
     min-height: auto;
   }
@@ -1498,11 +1543,17 @@ fieldset {
     width: 29px;
     height: 29px;
   }
-  .site-header > .button {
+  .public-header-actions { gap: 6px; }
+  .public-header-actions > .button {
     font-size: 11px;
-    padding: 9px 12px;
-    gap: 10px;
+    padding: 10px;
+    min-height: 44px;
+    white-space: nowrap;
+    gap: 6px;
   }
+  .public-header-actions > .button > span { display: none; }
+  .site-header .brand { gap: 6px; font-size: 17px; }
+  .site-header .brand svg { width: 24px; height: 24px; }
   .hero {
     grid-template-columns: 1fr;
     padding-block: 48px 62px;

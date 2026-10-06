@@ -55,8 +55,8 @@ export default async function Explore() {
               Threads appear here only after their owner opts in and a moderator
               approves.
             </p>
-            <Link className="button secondary" href="/demo/thread">
-              See a fictional example
+            <Link className="button secondary" href="/start">
+              Create your box
             </Link>
           </div>
         )}

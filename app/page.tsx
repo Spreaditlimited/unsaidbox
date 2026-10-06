@@ -22,14 +22,14 @@ export default function Home() {
             messages private. Share the ones that matter.
           </p>
           <div className="actions">
-            <Link href="/demo" className="button">
-              See how it feels <Arrow />
+            <Link href="/start" className="button">
+              Create your box <Arrow />
             </Link>
-            <Link href="/demo/share" className="button secondary">
-              Try a share card
+            <Link href="/explore" className="button secondary">
+              Explore threads
             </Link>
           </div>
-          <p className="fine">No account needed to explore the demo.</p>
+          <p className="fine">Your own link. A private inbox. Sharing on your terms.</p>
         </div>
         <div
           className="hero-scene"
@@ -145,8 +145,8 @@ export default function Home() {
               Long story? We split it into readable cards. No cropping, tiny
               text, or private dashboard details accidentally left in the frame.
             </p>
-            <Link href="/demo/share" className="button">
-              Open the sharing studio <Arrow />
+            <Link href="/dashboard" className="button">
+              Share from your inbox <Arrow />
             </Link>
           </div>
         </div>
@@ -176,8 +176,8 @@ export default function Home() {
               A focused form for messages or answers. Collect privately and
               share selected responses on your existing socials.
             </p>
-            <Link className="text-link" href="/demo/ask">
-              See the message screen <Arrow />
+            <Link className="text-link" href="/start">
+              Start collecting messages <Arrow />
             </Link>
           </article>
           <article className="option-card lavender">
@@ -189,8 +189,8 @@ export default function Home() {
               Your introduction, your questions, and only the responses you’ve
               chosen to publish. Not an unfiltered comment section.
             </p>
-            <Link className="text-link" href="/demo">
-              Visit an example page <Arrow />
+            <Link className="text-link" href="/start">
+              Create your own page <Arrow />
             </Link>
           </article>
         </div>

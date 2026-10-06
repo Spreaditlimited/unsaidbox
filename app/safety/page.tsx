@@ -1,5 +1,5 @@
 import { SiteShell } from "@/components/SiteShell";
-export const metadata = { title: "Privacy and safety in testing" };
+export const metadata = { title: "Privacy and safety" };
 export default function Safety() {
   return (
     <SiteShell>
@@ -7,15 +7,14 @@ export default function Safety() {
         <p className="eyebrow">TRUST IS PART OF THE PRODUCT</p>
         <h1>Clear boundaries.</h1>
         <p className="lead">
-          UnsaidBox is a testing release for adults aged 18 and over. Use test
-          content, not sensitive personal information.
+          UnsaidBox is for adults aged 18 and over. Avoid sharing sensitive
+          personal information in your messages.
         </p>
         <h2>What is saved?</h2>
         <p>
           Account details, password hashes, sessions, real inbox messages,
           question responses and moderation records are stored in the dedicated
-          live UnsaidBox database. Pages under /demo are fictional and their
-          forms do not submit messages.
+          UnsaidBox database.
         </p>
         <h2>Anonymous to the recipient</h2>
         <p>
@@ -48,7 +47,7 @@ export default function Safety() {
           UnsaidBox cannot be recalled. Session cookies keep account owners
           signed in; no sender identity is attached to message records.
         </p>
-        <h2>Before launch</h2>
+        <h2>Support and account emails</h2>
         <p>
           Contacting support is different from sending an anonymous message: the
           contact form sends your name, email address, subject and enquiry to
@@ -62,11 +61,8 @@ export default function Safety() {
         </p>
         <p>
           New accounts confirm their email before collecting messages. Optional
-          inbox notifications do not include anonymous message content. Email
-          delivery must be configured and tested before public launch, alongside
-          complete privacy and terms documents, retention and account-deletion
-          processes, and stronger abuse prevention. Do not share this testing
-          service widely yet.
+          inbox notifications do not include anonymous message content. Contact
+          hello@unsaidbox.com with privacy or account-deletion requests.
         </p>
       </section>
     </SiteShell>

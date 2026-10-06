@@ -34,7 +34,7 @@ export default function Cookies() {
         <p>
           Before you accept, we do not load Google Analytics or send it
           consent-denied tracking requests. After you accept, it can measure
-          visits to selected public information and demonstration pages and set{" "}
+          visits to selected public information pages and set{" "}
           <code>_ga</code> and <code>_ga_…</code> cookies for up to 180 days.
           Google may process device, browser and network information to provide
           this service.

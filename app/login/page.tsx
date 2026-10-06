@@ -39,13 +39,6 @@ export default function Login() {
       <p className="auth-switch">
         Don’t have an account? <Link href="/start">Create your box</Link>
       </p>
-      <details className="auth-testing-note">
-        <summary>Testing release information</summary>
-        <p>
-          Accounts and messages use the live UnsaidBox database; use test
-          content while we prepare for launch.
-        </p>
-      </details>
     </AuthShell>
   );
 }
