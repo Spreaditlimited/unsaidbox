@@ -1,0 +1,66 @@
+/* One checkbox treatment, including wrapped labels in narrow layouts. */
+.check,
+.app-form .check {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  cursor: pointer;
+}
+.check-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.check input[type="checkbox"],
+.app-form .check input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  place-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  margin: 1px 0 0;
+  border: 1.5px solid #9591ad;
+  border-radius: 5px;
+  background: var(--white);
+  cursor: inherit;
+  box-shadow: 0 1px 2px #20233208;
+}
+.check input[type="checkbox"]::before {
+  content: "";
+  width: 10px;
+  height: 6px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: translateY(-1px) rotate(-45deg) scale(0);
+}
+.check input[type="checkbox"]:checked {
+  background: var(--indigo);
+  border-color: var(--indigo);
+}
+.check input[type="checkbox"]:checked::before {
+  transform: translateY(-1px) rotate(-45deg) scale(1);
+}
+.check input[type="checkbox"]:focus-visible {
+  outline: 3px solid #8a7de0;
+  outline-offset: 3px;
+}
+.check input[type="checkbox"]:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.check:has(input:disabled) {
+  cursor: not-allowed;
+}
+@media (forced-colors: active) {
+  .check input[type="checkbox"] {
+    appearance: auto;
+  }
+  .check input[type="checkbox"]::before {
+    content: none;
+  }
+}

@@ -1,0 +1,52 @@
+UnsaidBox functional testing — 6 October 2026
+
+This app uses the live, dedicated unsaidbox MySQL database through the Mac's
+SSH tunnel on 127.0.0.1:13307. Keep that tunnel open. TLS verification remains
+strict. No existing website settings or database clients are used.
+
+Start: npm run dev
+Create an account: http://localhost:3001/start
+Sign in: http://localhost:3001/login
+Dashboard: http://localhost:3001/dashboard
+
+Email flows are implemented; follow EMAIL-SETUP.txt to install the two email
+tables, configure Hostinger privately and enable sending. Registration stays
+closed until email is enabled. New accounts are PENDING until verification.
+Test signup, welcome, recovery and notifications against an inbox you control.
+For an existing test account only, the developer activation escape hatch remains:
+  npm run account:activate-test -- YOUR_EMAIL --confirm-live-test
+Administrators use the separate npm run admin:create command and /admin/login.
+Personal-account test activation is recorded, but does NOT mark the email address as verified. Refresh the dashboard
+after activation. Use Settings > Email & notifications to verify previously
+activated test accounts. Never use this escape hatch to onboard real users.
+
+Core checks:
+1. Copy the inbox link and submit from another browser/device. The public page
+   need not be enabled. Messages must arrive pending and hidden.
+2. Create a question. Its answer link is immediately active and accepts answers
+   while hidden. A Facebook post link is optional.
+3. Approve a response. Share it as copied text or a PNG without making it public.
+   A shared-version edit must not change or expose the original text publicly.
+4. Enable the public page and a question's visibility. Each answer still needs
+   individual approval and visibility. Explore also needs moderator approval.
+5. Private-only submissions must never have publication or share-export access.
+   Changing inbox settings must not loosen an existing submission's policy.
+6. Another account must get 404 on your private question/response/share routes.
+7. Deletion requires visibility off; question deletion also requires its link
+   deactivated. Deleting a question removes its responses permanently.
+8. Closing collection must stop new submissions without removing public content.
+
+Automated checks: npm test; npm run typecheck; npm run build; npm run db:check.
+Build output is separate from development output to avoid cache collisions.
+
+Before public launch: verify real mailbox delivery and deploy a retry worker;
+finish account deletion/export and retention jobs, strengthen abuse
+controls, complete privacy/terms/support procedures, test concurrency and larger
+datasets, and configure deployment-side database access. The Mac SSH tunnel is
+not a Vercel production connection. No automatic Facebook personal-profile
+posting, custom domains or billing are implemented. Sender form responses are
+anonymous to account owners, not a guarantee of absolute untraceability.
+
+Local links use the address you opened. For phone tests open the Mac's Network
+address on the same Wi-Fi, not localhost. Local-network HTTP may not support
+clipboard/native sharing APIs; select-and-copy and PNG downloads remain available.

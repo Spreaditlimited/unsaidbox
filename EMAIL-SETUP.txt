@@ -1,0 +1,89 @@
+UNSAIDBOX EMAIL — HOSTINGER
+
+Sender and reply-to: UnsaidBox <hello@unsaidbox.com>
+SMTP: smtp.hostinger.com, port 465, TLS certificate validation required.
+The app does not read the mailbox. Replies go to Hostinger webmail.
+
+1. INSTALL THE TABLES
+The restricted app user cannot CREATE tables. In the existing Hostinger VPS
+console, use your database maintenance login to run the contents of:
+  prisma/migrations/20261006020000_email_delivery/migration.sql
+against ONLY the unsaidbox database. Do not recreate existing tables.
+After verifying both tables match the migration, record it from the Mac:
+  npx prisma migrate resolve --applied 20261006020000_email_delivery
+  npx prisma migrate status
+
+2. SAVE THE MAILBOX SETTINGS PRIVATELY ON YOUR MAC
+In the unsaidbox project:
+  npm run email:configure
+The password prompt is hidden. Never paste the password into chat, source code,
+or shell commands. The helper authenticates to Hostinger before replacing .env,
+preserves the existing database settings, and saves with owner-only permissions.
+It preserves an existing encryption key because queued emails depend on it.
+Base64 password storage prevents dotenv parsing issues; it is NOT encryption.
+Keep .env private and backed up securely; do not share its contents.
+
+Choose the app URL that email recipients can reach:
+- Mac-only testing: http://127.0.0.1:3001
+- Same-Wi-Fi phone testing: your Mac's LAN URL, e.g. http://192.168.1.20:3001
+- Production, after deployment: https://unsaidbox.com
+Local URLs only work while the Mac/dev server is running; 127.0.0.1 on a phone
+means the phone, not the Mac. Never infer email URLs from request Host headers.
+Email stays disabled until the table and SMTP checks succeed:
+  npm run email:enable
+This verifies SMTP and both tables, then enables emails in the private .env.
+Restart npm run dev after enabling and keep the database SSH tunnel open.
+
+3. CHECK AND SEND ONE TEST
+  npm run email:check
+Checks SMTP authentication/TLS and the new tables, without sending email.
+  npm run email:test
+Sends one branded message ONLY to hello@unsaidbox.com. Check Hostinger webmail
+and spam. SMTP acceptance does not prove inbox delivery.
+
+4. KEEP RETRIES RUNNING
+In another Mac terminal while testing:
+  npm run email:worker -- --watch
+Each request also attempts one queued email after its response. This separate
+worker retries pending mail every minute, including after server interruptions.
+  npm run email:status
+Shows aggregate counts only, not addresses, tokens, passwords or message bodies.
+PENDING=waiting/retrying; SENT=accepted by SMTP; FAILED=6 attempts exhausted;
+CANCELLED=no longer eligible; EXPIRED=link/message expired. FAILED payloads are
+erased; request a fresh auth link after fixing delivery. SMTP can duplicate a
+message if a process crashes after sending but before recording acceptance;
+stable Message-ID and claims reduce duplicates but do not guarantee exactly-once.
+
+5. END-TO-END ACCEPTANCE CHECK
+Create a test account with an inbox you control. Verify that registration leaves
+the account pending, the verification email arrives, GET doesn't consume the
+link, confirming activates once, and the welcome email arrives. Try expired and
+reused links. Reset the password, then confirm the old password and old sessions
+fail, the new password works and the security notice arrives. Enable optional
+notifications, submit a test inbox message and a question answer, and confirm
+emails link to the dashboard without exposing sender content. Inbox alerts are
+deduplicated per owner per clock-hour (so two near a boundary are possible).
+Turn alerts off and confirm queued notifications are suppressed. Admins can opt
+into report emails. Account suspension/restoration notices go to verified owners.
+Never use an unrelated user's account or address for testing.
+
+OPERATING LIMITS AND PRODUCTION CHECKLIST
+- Optional notifications default OFF and require verified email for user/admin.
+- Verification expires in 24h; reset links in 30m; random tokens stored as hashes.
+- Queued links are AES-256-GCM encrypted and erased on acceptance/cancellation/
+  expiry/final failure. Keep UNSAIDBOX_EMAIL_KEY stable and private.
+- Current conservative caps: 20 optional emails/hour, 50 total/hour, 100 total/day.
+  These are application guardrails, not a claim about your purchased quota.
+  Check Hostinger's plan limits before increasing them or onboarding users.
+- Hostinger must show correct MX, SPF and DKIM; check DMARC too. Use the exact
+  records provided by Hostinger, merge SPF rather than adding a second record.
+  No DNS records have been changed by this implementation.
+- Production needs its own secure DB access (not the Mac tunnel), private SMTP
+  variables, HTTPS app URL, and a scheduled worker. Nothing is deployed here.
+- The protected POST /api/internal/email-worker accepts Authorization: Bearer
+  UNSAIDBOX_EMAIL_WORKER_SECRET. Configure an approved scheduler for this endpoint
+  or the CLI worker on a trusted server before launch. No scheduler provisioned.
+- SMTP provides acceptance, not opens/bounces/delivery webhooks. Monitor mailbox
+  bounces and FAILED/EXPIRED counts; a dedicated transactional provider may be
+  needed as volume grows. Marketing campaigns are not implemented.
+- Anonymous senders have no collected email address and receive no emails.

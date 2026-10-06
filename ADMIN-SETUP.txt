@@ -1,0 +1,43 @@
+Separate UnsaidBox administration
+
+Entry: /admin -> /admin/login if not authenticated.
+Personal login remains /login -> /dashboard.
+Separate Administrator and AdministratorSession records; no automatic promotion
+or copying of personal passwords. Legacy Account.role never grants admin access.
+The same email can be used independently for both identities.
+
+Installation (not yet applied to the live database):
+1. An authorized database operator must apply only
+   prisma/migrations/20261006030000_separate_administration/migration.sql
+   to the dedicated unsaidbox database. It creates two new tables and changes
+   no existing tables or personal records. Do not run older migrations again.
+   Use the existing privileged MySQL connection; do not grant DDL to the app.
+2. Restart npm run dev after generating the client (npm run db:generate).
+3. In the UnsaidBox project terminal, run npm run admin:create.
+   Enter email, name and a NEW admin password when prompted. Password input
+   is hidden, kept out of command arguments and never printed.
+   Type CREATE only when ready to write to the configured database.
+4. Visit http://localhost:3001/admin/login and sign in.
+
+Recovery: npm run admin:reset-password prompts for the existing administrator
+and a new hidden password. It revokes every administrator session for that
+identity, does not reactivate disabled administrators, and does not touch users.
+There is no public administrator registration or personal-email reset crossover.
+Keep operator terminal/database access restricted. Add MFA before public launch.
+
+Admin sessions: random 256-bit token, only its SHA-256 digest stored; eight-hour
+absolute expiry; HttpOnly, SameSite=Strict, /admin-only cookie, Secure in production.
+Personal sessions neither grant admin access nor get cleared on admin logout.
+CAPTCHA protects live admin login/settings; local development bypass is unchanged.
+Login rate limits use the shared DB store with a separate admin namespace.
+Moderation mutations still record AuditEvent rows and do not expose private inboxes.
+
+Report notifications tied to the old personal-account ADMIN flag are disabled,
+including already queued REPORT jobs. Report records are still available in /admin.
+Dedicated administrator email notifications and profile-photo storage are follow-up
+work; personal profile photos and account emails are unchanged.
+
+Verified locally: unauthenticated admin routes redirect to /admin/login; separate
+login renders; isolation tests and production build. Actual administrator sign-in
+and mutations require the new tables and provisioned credentials and have not yet
+been tested against the live database. No deployment performed.

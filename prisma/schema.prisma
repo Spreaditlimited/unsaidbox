@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("UNSAIDBOX_DATABASE_URL")
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  ARCHIVED
+  SPAM
+}
+
+enum SharingPolicy {
+  OWNER_MAY_SHARE
+  PRIVATE_ONLY
+}
+
+model Administrator {
+  id String @id @default(cuid()) @db.VarChar(30)
+  email String @unique @db.VarChar(254)
+  displayName String @db.VarChar(80)
+  passwordHash String @db.VarChar(256)
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  sessions AdministratorSession[]
+}
+
+model AdministratorSession {
+  tokenHash String @id @db.VarChar(64)
+  administratorId String @db.VarChar(30)
+  administrator Administrator @relation(fields: [administratorId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  @@index([administratorId])
+}
+
+model Account {
+  id                 String        @id @default(cuid()) @db.VarChar(30)
+  email              String        @unique @db.VarChar(254)
+  emailVerifiedAt    DateTime?
+  passwordHash       String        @db.VarChar(256)
+  role               String        @default("USER") @db.VarChar(20)
+  username           String        @unique @db.VarChar(30)
+  displayName        String        @db.VarChar(80)
+  introduction       String?       @db.VarChar(500)
+  status             AccountStatus @default(PENDING)
+  publicPageEnabled  Boolean       @default(false)
+  inboxOpen          Boolean       @default(true)
+  inboxSharingPolicy SharingPolicy @default(OWNER_MAY_SHARE)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  questions          Question[]
+  submissions        Submission[]
+  sessions           Session[]
+  tokens             AuthToken[]
+  avatar             AccountAvatar?
+  emailPreference    EmailPreference?
+  emailDeliveries    EmailDelivery[]
+}
+
+model EmailPreference {
+  accountId String @id @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  newMessages Boolean @default(false)
+  moderationReports Boolean @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+model EmailDelivery {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  kind String @db.VarChar(30)
+  dedupeKey String @unique @db.VarChar(64)
+  // AES-256-GCM encrypted; erased after acceptance, cancellation or expiry.
+  payload String? @db.Text
+  status String @default("PENDING") @db.VarChar(20)
+  attempts Int @default(0)
+  nextAttemptAt DateTime @default(now())
+  lockedAt DateTime?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  sentAt DateTime?
+  lastError String? @db.VarChar(40)
+  @@index([status, nextAttemptAt])
+  @@index([accountId, createdAt])
+}
+
+model AccountAvatar {
+  accountId String @id @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  image Bytes @db.Blob
+  version String @db.VarChar(32)
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  id                  String        @id @default(cuid()) @db.VarChar(30)
+  accountId           String        @db.VarChar(30)
+  account             Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  body                String        @db.Text
+  linkActive          Boolean       @default(true)
+  acceptingResponses  Boolean       @default(true)
+  publicVisible       Boolean       @default(false)
+  discoverable        Boolean       @default(false)
+  discoveryApproved   Boolean       @default(false)
+  sharingPolicy       SharingPolicy @default(OWNER_MAY_SHARE)
+  socialPostUrl       String?       @db.VarChar(1000)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  submissions         Submission[]
+
+  @@unique([id, accountId])
+  @@index([accountId, createdAt])
+}
+
+model Submission {
+  id            String           @id @default(cuid()) @db.VarChar(30)
+  accountId     String           @db.VarChar(30)
+  account       Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  questionId    String?          @db.VarChar(30)
+  question      Question?        @relation(fields: [questionId, accountId], references: [id, accountId], onDelete: Cascade)
+  body          String           @db.Text
+  ownerReply    String?          @db.Text
+  publicBody    String?          @db.Text
+  status        SubmissionStatus @default(PENDING)
+  publicVisible Boolean          @default(false)
+  // Snapshot at submission: later settings must not loosen the sender's promise.
+  sharingPolicy SharingPolicy    @default(OWNER_MAY_SHARE)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([accountId, status, createdAt])
+  @@index([questionId, accountId, publicVisible])
+}
+
+model Session {
+  tokenHash String @id @db.VarChar(64)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  @@index([accountId])
+}
+
+model AuthToken {
+  tokenHash String @id @db.VarChar(64)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  purpose String @db.VarChar(20)
+  expiresAt DateTime
+  @@index([accountId])
+}
+
+model RateLimit {
+  key String @id @db.VarChar(64)
+  count Int @default(1)
+  expiresAt DateTime
+}
+
+model Report {
+  id String @id @default(cuid()) @db.VarChar(30)
+  questionId String? @db.VarChar(30)
+  submissionId String? @db.VarChar(30)
+  reason String @db.VarChar(1000)
+  status String @default("OPEN") @db.VarChar(20)
+  createdAt DateTime @default(now())
+}
+
+model AuditEvent {
+  id String @id @default(cuid()) @db.VarChar(30)
+  actorId String @db.VarChar(30)
+  action String @db.VarChar(80)
+  targetId String @db.VarChar(30)
+  createdAt DateTime @default(now())
+}

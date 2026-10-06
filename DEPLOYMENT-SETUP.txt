@@ -1,0 +1,42 @@
+UnsaidBox deployment setup
+
+Intended private GitHub repository: SpreaditLimited/unsaidbox
+Vercel team: tochukwu-nkwochas-projects
+Vercel project: unsaidbox (prj_hj6f1UVHZzQikHow32P9w4RpPdmy)
+Domains: unsaidbox.com and www.unsaidbox.com
+
+The Vercel project is created and linked locally. Both domains are attached.
+Hostinger remains the authoritative DNS provider and mailbox provider.
+Do not change nameservers or delete MX/SPF/DKIM/DMARC records.
+
+Production configuration:
+- Email, CAPTCHA, Analytics and public origin settings uploaded through CLI stdin.
+- Secrets excluded from Git, CLI arguments and deployment source uploads.
+- Existing email encryption key retained so queued payloads remain readable.
+- CAPTCHA site-key spelling normalized to GOOGLE_CAPTCHA_SITE_KEY in Vercel.
+- No production secrets assigned to Preview or Development.
+- UNSAIDBOX_DATABASE_URL deliberately NOT uploaded: local URL uses a Mac tunnel
+  and an absolute Mac certificate path, neither usable from deployed functions.
+
+Before release:
+1. Create the private GitHub repo once SpreaditLimited GitHub access is connected;
+   push reviewed main and connect it to this Vercel project.
+2. Establish production MySQL connectivity without the Mac tunnel. Keep strict
+   certificate verification and the dedicated unsaidbox_app database account.
+   Obtain approval before any paid network add-on or broader server exposure.
+3. Ensure the public CA certificate is bundled and referenced by a runtime-valid
+   path, then upload the verified production database URL as a Production Secret.
+4. Configure a secured scheduled email retry worker; after-response processing
+   alone is not a reliable retry scheduler. Confirm cron capability and plan limits.
+5. Stage and verify production authentication, CAPTCHA, database access and email
+   before switching website DNS. Use domain-specific Vercel DNS requirements.
+6. Preserve Hostinger email DNS and verify HTTPS for apex and www. Choose canonical
+   apex domain and redirect www consistently with UNSAIDBOX_APP_URL.
+7. Check Google reCAPTCHA domain allowlisting. Analytics only loads with consent;
+   keep enhanced measurement disabled as described in PRIVACY-INTEGRATIONS.txt.
+
+vercel.json regenerates Prisma before building; generated files are not tracked.
+No automatic migrations or seeds run in production builds.
+The public CA certificate is not a private key. Never commit server/CA private keys.
+
+This file records preparation, not a claim of a successful deployment.

@@ -1,0 +1,46 @@
+{
+  "name": "unsaidbox",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "db:validate": "prisma validate",
+    "db:generate": "prisma generate",
+    "db:configure": "node scripts/configure-database.mjs",
+    "db:check": "node --env-file=.env scripts/check-database.mjs",
+    "account:activate-test": "node --env-file=.env scripts/activate-test-account.mjs",
+    "admin:create": "node --env-file=.env scripts/manage-administrator.mjs create",
+    "admin:reset-password": "node --env-file=.env scripts/manage-administrator.mjs reset",
+    "email:configure": "node scripts/configure-email.mjs",
+    "email:check": "node --env-file=.env scripts/email.mjs check",
+    "email:enable": "node --env-file=.env scripts/email.mjs enable",
+    "email:test": "node --env-file=.env scripts/email.mjs test",
+    "email:worker": "node --env-file=.env scripts/email.mjs worker",
+    "email:status": "node --env-file=.env scripts/email.mjs status"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "next": "15.5.25",
+    "nodemailer": "^10.0.15",
+    "radix-ui": "^1.7.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5"
+  },
+  "overrides": {
+    "postcss": "8.5.28",
+    "deepmerge-ts": "8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.17",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "prisma": "6.19.3",
+    "typescript": "5.9.3"
+  }
+}

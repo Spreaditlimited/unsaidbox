@@ -1,0 +1,16 @@
+.env
+.env.*
+.git
+.next
+.next-production
+node_modules
+coverage
+*.tsbuildinfo
+*.log
+*.key
+*-key.pem
+*.p12
+*.pfx
+.auth
+test-results
+playwright-report

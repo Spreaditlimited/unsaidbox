@@ -1,0 +1,49 @@
+UNSAIDBOX — CONTACT, RECAPTCHA AND ANALYTICS
+
+Contact: /contact. Sends name/email/subject/message to hello@unsaidbox.com using
+the existing Hostinger sender. Reply-To is the validated visitor address. No
+automatic visitor email (prevents unauthenticated email bombing). SMTP acceptance
+is not confirmed inbox delivery. Failed sends return an error and retain the form.
+No support-enquiry database table or new database privileges are needed.
+
+Google reCAPTCHA v3 (score-based, invisible):
+- Uses GOOGLE_CAPTCHA_SECRET_KEY and GOOGLE_CAPTCHA_SITE_KEY. The user's existing
+  GOOGlE_CAPTCHA_SITE_KEY spelling is supported, as are UNSAIDBOX_RECAPTCHA_* aliases.
+- Runs only on submit, not on page load, with a fresh token each time.
+- Live Vercel Production is mandatory/fail-closed. Local npm run dev and local
+  production builds configured with a loopback app URL bypass it. Vercel previews
+  bypass it. No bypass is based on the incoming Host header.
+- A matching action, hostname, success, age <=120 seconds and score >=0.5 are
+  required. Adjust UNSAIDBOX_RECAPTCHA_MIN_SCORE only after reviewing real traffic.
+- Use UNSAIDBOX_RECAPTCHA_HOSTNAMES=unsaidbox.com,www.unsaidbox.com for launch.
+  Also allow these domains in the Google reCAPTCHA console. Keys must be v3 keys
+  with a siteverify-compatible secret, not v2 or Enterprise-only assessment keys.
+- Protects signup/login/recovery/verification, anonymous submissions, reports,
+  contact, account settings, question/response edits/deletion, photo changes and
+  moderation. Logout is always available; filters, copy/share, cookie choices
+  and illustrative local demos do not submit protected server data.
+- The Google badge is hidden with the required Google privacy/terms attribution
+  displayed on protected forms. recaptcha.net is used to reduce unrelated Google
+  cookies. Security processing remains independent of optional analytics consent.
+
+Google Analytics 4:
+- GOOGLE_ANALYTICS_TAG is a G-... measurement ID, never raw HTML. Also supports
+  UNSAIDBOX_GA_MEASUREMENT_ID. Only the public ID is sent to the browser.
+- Basic consent gating: no Analytics script/request before explicit acceptance.
+  Reject and accept have equal visual treatment. Choices last up to 180 days.
+- Cookie settings is available on all screens. Withdrawal disables tracking,
+  removes accessible _ga cookies and reloads if the tag had already executed.
+  Existing login cookies are not cleared. Cross-tab changes are respected.
+- Page views are manually limited to the information/demo allowlist in
+  lib/analytics-policy.mjs. No auth, account, contact, sender or personal-box URLs.
+  Query strings, fragments and referrers are not supplied to Analytics.
+- IMPORTANT in GA Admin > Data streams > Web stream: turn Enhanced measurement
+  OFF to prevent automatic forms/click/history events. Keep Google signals,
+  user-provided data collection and advertising features OFF. Do not attach
+  extra Google tags that bypass these application controls.
+- Browser tests use intercepted requests, not real visitor content. Check real
+  GA Realtime and live CAPTCHA scores after an explicitly authorized deployment.
+
+The supplied contact details are displayed as given. Cookie information explains
+implemented behaviour; the full launch privacy/terms documentation still needs
+the business's review. No claim of legal compliance is made by these changes.
