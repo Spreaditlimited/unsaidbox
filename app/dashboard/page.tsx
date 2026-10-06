@@ -3,6 +3,7 @@ import Form from "next/form";
 import { requireAccount } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { DashboardShell } from "@/components/DashboardShell";
+import { ResponseActions } from "@/components/ResponseActions";
 import { CopyLink } from "@/components/CopyLink";
 import { Picker } from "@/components/ui/Picker";
 import { Icon } from "@/components/ui/Icon";
@@ -282,12 +283,7 @@ export default async function Dashboard({
                           ? "Visibility enabled"
                           : "Hidden"}
                     </span>
-                    <Link
-                      className="text-link"
-                      href={`/dashboard/responses/${s.id}`}
-                    >
-                      Review <Icon name="arrow" />
-                    </Link>
+                    <ResponseActions response={s} />
                   </div>
                 </article>
               ))}

@@ -83,7 +83,7 @@ export default async function Response({
         <div className="action-row">
           {canShareResponse(s) && (
             <Link className="button" href={`/dashboard/responses/${id}/share`}>
-              Share response
+              Create share card
             </Link>
           )}
           <Link className="button secondary" href="/dashboard">

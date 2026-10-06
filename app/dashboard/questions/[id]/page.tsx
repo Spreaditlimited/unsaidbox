@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { requireAccount } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { DashboardShell } from "@/components/DashboardShell";
+import { ResponseActions } from "@/components/ResponseActions";
 import { ActionForm, DeleteForm } from "@/components/ActionForm";
 import { CopyLink } from "@/components/CopyLink";
 import { saveQuestion, deleteQuestion } from "@/app/actions";
@@ -89,12 +90,7 @@ export default async function Question({
             <article className="panel" key={s.id}>
               <span className="badge">{s.status}</span>
               <p className="message-text">{s.body}</p>
-              <Link
-                className="button secondary"
-                href={`/dashboard/responses/${s.id}`}
-              >
-                Review response
-              </Link>
+              <ResponseActions response={s} />
             </article>
           ))}
         </div>
