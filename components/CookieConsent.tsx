@@ -43,7 +43,17 @@ export function CookieConsent({ id }: { id: string }) {
   const [storageError, setStorageError] = useState("");
   const scriptStarted = useRef(false);
   const lastPage = useRef("");
-  const settingsButton = useRef<HTMLButtonElement>(null);
+  const settingsButton = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    function showSettings() {
+      settingsButton.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setAnalytics(choice?.analytics ?? false);
+      setOpen(true);
+    }
+    window.addEventListener("unsaidbox:cookie-settings", showSettings);
+    return () => window.removeEventListener("unsaidbox:cookie-settings", showSettings);
+  }, [choice]);
 
   function stopTracking(reload: boolean) {
     if (id) window[`ga-disable-${id}`] = true;
@@ -212,7 +222,8 @@ export function CookieConsent({ id }: { id: string }) {
             </button>
             <button
               className="text-button"
-              onClick={() => {
+              onClick={(event) => {
+                settingsButton.current = event.currentTarget;
                 setAnalytics(false);
                 setOpen(true);
               }}
@@ -228,15 +239,6 @@ export function CookieConsent({ id }: { id: string }) {
         </p>
       ) : null}
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Trigger asChild>
-          <button
-            ref={settingsButton}
-            className="cookie-settings-button"
-            onClick={() => setAnalytics(choice?.analytics ?? false)}
-          >
-            Cookie settings
-          </button>
-        </Dialog.Trigger>
         <Dialog.Portal>
           <Dialog.Overlay className="modal-overlay" />
           <Dialog.Content

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SiteShell } from "@/components/SiteShell";
+import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 export const metadata = { title: "Cookie information" };
 export default function Cookies() {
   return (
@@ -10,8 +11,9 @@ export default function Cookies() {
         <p>
           We use essential storage to operate UnsaidBox and optional Google
           Analytics only when you choose to allow it. Use the Cookie settings
-          button at any time to change your choice.
+          button on this page at any time to change your choice.
         </p>
+        <CookieSettingsButton />
         <h2>Essential storage</h2>
         <p>
           The <code>unsaidbox_session</code> cookie keeps account owners signed
