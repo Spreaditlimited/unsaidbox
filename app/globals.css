@@ -11,6 +11,14 @@
   --workspace-bg: #f7f7fb;
   --workspace-radius: 14px;
   --control-height: 46px;
+  --public-layout-max: 1440px;
+  --public-layout-gutter: 16px;
+}
+@media (min-width: 640px) {
+  :root { --public-layout-gutter: 24px; }
+}
+@media (min-width: 1024px) {
+  :root { --public-layout-gutter: 32px; }
 }
 .dashboard {
   padding-block: 32px 80px;
@@ -389,7 +397,11 @@ p + p {
   background: var(--indigo);
 }
 .wrap {
-  width: min(1160px, calc(100% - 64px));
+  /* Match Sure Imports' outer container, excluding its responsive gutters. */
+  width: min(
+    calc(var(--public-layout-max) - var(--public-layout-gutter) * 2),
+    calc(100% - var(--public-layout-gutter) * 2)
+  );
   margin-inline: auto;
 }
 .reading-width {
@@ -1519,10 +1531,12 @@ fieldset {
     gap: 18px;
   }
 }
-@media (max-width: 760px) {
-  .wrap {
-    width: calc(100% - 40px);
+@media (min-width: 761px) {
+  .scene-orbit {
+    inset-inline: 36px;
   }
+}
+@media (max-width: 760px) {
   .site-header {
     flex-wrap: nowrap;
     gap: 8px;

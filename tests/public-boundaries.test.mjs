@@ -3,6 +3,21 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 const source = (path) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
+test("Explore displays usernames and does not fetch owners' full names", async () => {
+  const page = await source("app/explore/page.tsx");
+  assert.match(page, /account: \{ select: \{ username: true \} \}/);
+  assert.match(page, /@\{q\.account\.username\}/);
+  assert.doesNotMatch(page, /displayName/);
+  for (const gate of ["linkActive: true", "publicVisible: true", "discoverable: true", "discoveryApproved: true", 'status: "ACTIVE"', "publicPageEnabled: true"])
+    assert.ok(page.includes(gate));
+});
+test("thread owner labels use usernames without fetching full names", async () => {
+  const page = await source("app/q/[id]/page.tsx");
+  assert.match(page, /username: true/);
+  assert.match(page, /@\{q\.account\.username\}’s box/);
+  assert.match(page, /@\{q\.account\.username\} replied/);
+  assert.doesNotMatch(page, /displayName/);
+});
 test("public response projection omits unredacted originals before rendering", async () => {
   const sql = await source("lib/public-data.ts");
   assert.match(sql, /COALESCE\(s\.publicBody, s\.body\) AS text/);

@@ -17,7 +17,7 @@ export default async function Explore() {
     select: {
       id: true,
       body: true,
-      account: { select: { displayName: true } },
+      account: { select: { username: true } },
     },
   });
   return (
@@ -38,7 +38,7 @@ export default async function Explore() {
         <div className="app-grid">
           {questions.map((q) => (
             <article key={q.id} className="thread-card">
-              <span className="fine">{q.account.displayName}</span>
+              <span className="fine">@{q.account.username}</span>
               <h3>
                 <Link href={`/q/${q.id}`}>{q.body}</Link>
               </h3>

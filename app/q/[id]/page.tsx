@@ -23,7 +23,6 @@ export default async function Thread({
       account: {
         select: {
           username: true,
-          displayName: true,
           status: true,
           publicPageEnabled: true,
         },
@@ -36,7 +35,7 @@ export default async function Thread({
     <SiteShell>
       <section className="reading-width section">
         <Link className="text-link" href={`/u/${q.account.username}`}>
-          {q.account.displayName}’s box
+          @{q.account.username}’s box
         </Link>
         <header className="thread-heading">
           <h1 className="message-text">{q.body}</h1>
@@ -66,7 +65,7 @@ export default async function Thread({
               <p className="message-text">{r.text}</p>
               {r.ownerReply && (
                 <div className="owner-reply">
-                  <span className="fine">{q.account.displayName} replied</span>
+                  <span className="fine">@{q.account.username} replied</span>
                   <p className="message-text">{r.ownerReply}</p>
                 </div>
               )}
