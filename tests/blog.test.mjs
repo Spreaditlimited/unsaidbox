@@ -12,16 +12,20 @@ function form(overrides = {}) {
   for (const [key, value] of Object.entries({ title: "Ask better questions", slug: "ask-better-questions", excerpt: "An actionable guide to asking your audience thoughtful questions.", contentHtml: `<h2>Listen first</h2><p>${"A useful editorial paragraph. ".repeat(12)}</p>`, authorName: "UnsaidBox Editorial", category: policy.blogCategories[0], seoTitle: "", seoDescription: "", imageAlt: "", revision: "1", operation: "draft", ...overrides })) f.set(key, value);
   return f;
 }
-test("robots explicitly allows the sitemap while preserving existing crawl restrictions", async () => {
+test("robots allows public crawling and excludes account and audience content", async () => {
   const source = await readFile(new URL("../app/robots.ts", import.meta.url), "utf8");
   const code = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText;
   const context = { exports: {} };
   vm.runInNewContext(code, context);
   const result = context.exports.default();
   assert.equal(result.sitemap, "https://unsaidbox.com/sitemap.xml");
-  assert.equal(result.rules.userAgent, "*");
-  assert.equal(result.rules.disallow, "/");
-  assert.deepEqual(Array.from(result.rules.allow), ["/sitemap.xml$", "/blog", "/_next/static/"]);
+  assert.equal(result.rules[0].userAgent, "*");
+  assert.equal(result.rules[0].allow, "/");
+  assert.equal(result.host, "https://unsaidbox.com");
+  for (const path of ["/admin", "/dashboard", "/api/", "/u/", "/q/", "/f/", "/explore", "/login", "/reset-password"])
+    assert.ok(result.rules[0].disallow.includes(path));
+  for (const path of ["/", "/blog", "/social/", "/sitemap.xml", "/_next/"])
+    assert.ok(!result.rules[0].disallow.includes(path));
 });
 test("blog HTML preserves editorial structure but strips executable and tracking content", () => {
   const clean = policy.cleanBlogHtml('<h2>Guide</h2><p onclick="bad()">Hello <strong>reader</strong><script>alert(1)</script><iframe src="https://bad.test"></iframe><img src="https://tracker.test"><a href="javascript:bad()">unsafe</a><a href="https://example.com">safe</a></p>');

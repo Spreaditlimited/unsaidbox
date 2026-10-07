@@ -4,6 +4,8 @@ import { ActionForm } from "@/components/ActionForm";
 import { Checkbox } from "@/components/ui/Checkbox";
 import { sendContact } from "./actions";
 export const metadata = {
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://unsaidbox.com/contact" },
   title: "Contact us",
   description: "Questions about UnsaidBox? Get in touch with our team.",
 };

@@ -5,12 +5,22 @@ import { SiteShell } from "@/components/SiteShell";
 import { BlogArticle } from "@/components/blog/BlogArticle";
 import { getPublicBlog, blogImageUrl } from "@/lib/blog";
 import { blogOrigin } from "@/lib/blog-policy.mjs";
+import { articleSocialImage, socialMetadata } from "@/lib/social-metadata";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const post = await getPublicBlog((await params).slug);
   if (!post) return { title: "Article not found", robots: { index: false, follow: false } };
   const image = blogImageUrl(post);
-  return { title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, robots: { index: true, follow: true }, alternates: { canonical: `${blogOrigin}/blog/${post.slug}` }, openGraph: { type: "article", title: post.seoTitle || post.title, description: post.seoDescription || post.excerpt, url: `${blogOrigin}/blog/${post.slug}`, publishedTime: post.publishAt!.toISOString(), modifiedTime: post.updatedAt.toISOString(), authors: [post.authorName], ...(image ? { images: [{ url: blogOrigin + image, width: 1600, height: 900, alt: post.imageAlt || post.title }] } : {}) }, twitter: { card: "summary_large_image", title: post.title, description: post.excerpt, ...(image ? { images: [blogOrigin + image] } : {}) } };
+  const title = post.seoTitle || post.title;
+  const description = post.seoDescription || post.excerpt;
+  const url = `${blogOrigin}/blog/${post.slug}`;
+  const social = socialMetadata({ title, description, url, image: articleSocialImage(image, post.imageAlt || post.title) });
+  return {
+    title, description, robots: { index: true, follow: true },
+    alternates: { canonical: url },
+    ...social,
+    openGraph: { ...social.openGraph, type: "article", publishedTime: post.publishAt!.toISOString(), modifiedTime: post.updatedAt.toISOString(), authors: [post.authorName] },
+  };
 }
 export default async function Article({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

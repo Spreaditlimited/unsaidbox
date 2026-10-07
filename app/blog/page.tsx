@@ -4,13 +4,17 @@ import { SiteShell } from "@/components/SiteShell";
 import { db } from "@/lib/db";
 import { publicBlogWhere, blogOrigin, blogCategories } from "@/lib/blog-policy.mjs";
 import { blogImageUrl } from "@/lib/blog";
+import { socialMetadata, blogSocialImage } from "@/lib/social-metadata";
 export const dynamic = "force-dynamic";
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ page?: string; category?: string }> }): Promise<Metadata> {
   const p = await searchParams;
   const query = new URLSearchParams();
   if (p.category && blogCategories.includes(p.category)) query.set("category", p.category);
   if (Number(p.page) > 1) query.set("page", String(Number.parseInt(p.page!, 10)));
-  return { title: "Blog — Better questions, honest answers", description: "Practical guides, question ideas and thoughtful ways to connect with your audience using anonymous feedback.", robots: { index: !query.size, follow: true }, alternates: { canonical: `${blogOrigin}/blog${query.size ? `?${query}` : ""}` } };
+  const title = "Blog — Better questions, honest answers";
+  const description = "Practical guides, question ideas and thoughtful ways to connect with your audience using anonymous feedback.";
+  const url = `${blogOrigin}/blog${query.size ? `?${query}` : ""}`;
+  return { title, description, robots: { index: !query.size, follow: true }, alternates: { canonical: url }, ...socialMetadata({ title, description, url, image: blogSocialImage }) };
 }
 export default async function Blog({ searchParams }: { searchParams: Promise<{ page?: string; category?: string }> }) {
   const params = await searchParams;

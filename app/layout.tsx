@@ -9,14 +9,16 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { measurementId } from "@/lib/analytics-policy.mjs";
 import { CaptchaProvider } from "@/components/Captcha";
 import { captchaConfig } from "@/lib/captcha.mjs";
+import { siteOrigin, siteDescription, socialMetadata } from "@/lib/social-metadata";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin),
   title: {
     default: "UnsaidBox — A place for the unsaid",
     template: "%s · UnsaidBox",
   },
-  description:
-    "A thoughtful home for anonymous questions, honest feedback, and stories. Collect privately. Share with intention.",
+  description: siteDescription,
+  ...socialMetadata({ title: "UnsaidBox — A place for the unsaid", description: siteDescription }),
   robots: { index: false, follow: false },
 };
 export const viewport: Viewport = {

@@ -1,5 +1,5 @@
 import { SiteShell } from "@/components/SiteShell";
-export const metadata = { title: "Privacy and safety" };
+export const metadata = { title: "Privacy and safety", robots: { index: true, follow: true }, alternates: { canonical: "https://unsaidbox.com/safety" } };
 export default function Safety() {
   return (
     <SiteShell>

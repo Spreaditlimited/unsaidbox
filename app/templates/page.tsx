@@ -2,6 +2,8 @@ import { SiteShell } from "@/components/SiteShell";
 import { TemplateGallery } from "@/components/forms/TemplateGallery";
 import "@/app/forms.css";
 export const metadata = {
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://unsaidbox.com/templates" },
   title: "Anonymous feedback form templates",
   description:
     "Start with thoughtful questions for your course, audience or community. Customise a template and collect anonymous responses privately.",

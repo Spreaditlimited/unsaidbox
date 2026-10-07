@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SiteShell } from "@/components/SiteShell";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
-export const metadata = { title: "Cookie information" };
+export const metadata = { title: "Cookie information", robots: { index: true, follow: true }, alternates: { canonical: "https://unsaidbox.com/cookies" } };
 export default function Cookies() {
   return (
     <SiteShell>

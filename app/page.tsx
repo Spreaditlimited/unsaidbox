@@ -2,6 +2,11 @@ import Link from "next/link";
 import { SiteShell } from "@/components/SiteShell";
 import { Arrow } from "@/components/Brand";
 
+export const metadata = {
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://unsaidbox.com" },
+};
+
 export default function Home() {
   return (
     <SiteShell>
