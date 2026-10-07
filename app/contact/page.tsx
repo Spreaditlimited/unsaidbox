@@ -28,28 +28,12 @@ export default function Contact() {
           aria-labelledby="contact-details-heading"
         >
           <h2 id="contact-details-heading">A real team. An open inbox.</h2>
-          <p>Choose whichever way feels easiest.</p>
+          <p>Email us directly or use our contact form.</p>
           <dl>
             <div>
               <dt>Email us</dt>
               <dd>
                 <a href="mailto:hello@unsaidbox.com">hello@unsaidbox.com</a>
-              </dd>
-            </div>
-            <div>
-              <dt>Call us</dt>
-              <dd>
-                <a href="tel:+447881194138">+44 7881 194138</a>
-              </dd>
-            </div>
-            <div>
-              <dt>Our address</dt>
-              <dd>
-                <address>
-                  33 Bevan Court, Dunlop Street,
-                  <br />
-                  Warrington, England.
-                </address>
               </dd>
             </div>
           </dl>
