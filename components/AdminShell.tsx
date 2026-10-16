@@ -1,3 +1,4 @@
+import {ThemePicker} from "./ThemePicker";
 import Link from "next/link";
 import { Brand } from "./Brand";
 import { Icon } from "./ui/Icon";
@@ -18,7 +19,7 @@ export function AdminShell({ children, name }: { children: React.ReactNode; name
     <div className="workspace-body">
       <header className="workspace-topbar">
         <span className="workspace-breadcrumb">Administration <span>/</span> <strong>UnsaidBox</strong></span>
-        <div className="workspace-account">
+        <div className="workspace-account"><ThemePicker/>
           <Link href="/admin/settings" className="account-name">{name}</Link>
           <form action={adminLogout}><button className="workspace-signout" aria-label="Sign out of administration" title="Sign out of administration"><Icon name="logout" /></button></form>
         </div>

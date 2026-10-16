@@ -1,6 +1,14 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "npm run db:generate && npm run build",
-  "regions": ["lhr1"]
+  "crons": [
+    {
+      "path": "/api/internal/weekly-digest",
+      "schedule": "0 17 * * 0"
+    },
+    {
+      "path": "/api/internal/weekly-digest",
+      "schedule": "0 18 * * 0"
+    }
+  ]
 }

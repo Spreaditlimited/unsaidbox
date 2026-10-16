@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-14T11:25:43.150Z",
+  "results": [
+    {
+      "stage": "NO_QUESTION",
+      "received": true,
+      "helpVisible": true,
+      "rawTemplateVisible": false
+    },
+    {
+      "stage": "NO_ACCOUNT",
+      "received": true,
+      "helpVisible": false,
+      "rawTemplateVisible": false
+    }
+  ]
+}

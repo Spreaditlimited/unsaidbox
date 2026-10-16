@@ -8,6 +8,7 @@ import { DashboardShell } from "@/components/DashboardShell";
 import { ActionForm, DeleteForm } from "@/components/ActionForm";
 import { saveResponse, deleteResponse } from "@/app/actions";
 import { Picker } from "@/components/ui/Picker";
+import { followupsReady } from '@/lib/followups';
 export default async function Response({
   params,
 }: {
@@ -17,12 +18,14 @@ export default async function Response({
   const { id } = await params;
   const s = await db().submission.findFirst({ where: { id, accountId: a.id } });
   if (!s) notFound();
+  const conversation = await followupsReady() ? await db().followupConversation.findFirst({ where: { submissionId: id, accountId: a.id }, select: { id: true } }) : null;
   return (
     <DashboardShell
       accountId={a.id}
       name={a.displayName}
     >
       <h1>Review response.</h1>
+      {conversation ? <section className="panel editor-panel"><h2>The sender is open to a private follow-up.</h2><p>Ask for context or send a thank-you. These replies are separate from your public reply and never appear on share cards.</p><Link href={`/dashboard/follow-ups/${conversation.id}`} className="button">Open private conversation →</Link></section> : null}
       <section className="panel editor-panel">
         <span className="badge">
           {s.sharingPolicy === "PRIVATE_ONLY"
@@ -61,7 +64,7 @@ export default async function Response({
             blank to use the original text.
           </p>
           <label>
-            Your reply · optional
+            Your public reply · optional
             <textarea
               name="ownerReply"
               defaultValue={s.ownerReply ?? ""}

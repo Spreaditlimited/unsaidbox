@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { Checkbox } from "@/components/ui/Checkbox";
+import styles from './ShareStudio.module.css';
 import { demoQuestion, demoResponses } from "@/lib/demo";
 import { cardFormats, layoutCard } from "@/lib/card-layout.mjs";
-import { facebookPostUrl } from "@/lib/share.mjs";
+import { copyResponseAndOpenPost, copyResponseText, facebookPostUrl } from "@/lib/share.mjs";
 
 type Format = keyof typeof cardFormats;
 const palettes = {
@@ -32,7 +35,11 @@ export function ShareStudio({
   initialBody,
   question = demoQuestion,
   initialPostUrl = "",
-}: { initialBody?: string; question?: string; initialPostUrl?: string } = {}) {
+  brand = null,
+}: { initialBody?: string; question?: string; initialPostUrl?: string; brand?: { name: string; accent: string; hideAttribution: boolean; logo: string | null } | null } = {}) {
+  const [brandLogo, setBrandLogo] = useState<HTMLImageElement | null>(null);
+  const [hideAttribution, setHideAttribution] = useState(brand?.hideAttribution ?? false);
+  const [includeQuestion, setIncludeQuestion] = useState(false);
   const [selected, setSelected] = useState(0);
   const [body, setBody] = useState(initialBody ?? demoResponses[0].body);
   const [format, setFormat] = useState<Format>("square");
@@ -42,11 +49,23 @@ export function ShareStudio({
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState("");
-  const [postUrl, setPostUrl] = useState(initialPostUrl);
+  const [facebookStatus, setFacebookStatus] = useState("");
   const [nativeSharing, setNativeSharing] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const responseRef = useRef<HTMLTextAreaElement>(null);
-  const validPost = facebookPostUrl(postUrl);
+  const facebookSharing = useRef(false);
+  const validPost = facebookPostUrl(initialPostUrl);
+
+  useEffect(() => {
+    setBrandLogo(null);
+    if (!brand?.logo) return;
+    const image = new Image();
+    let active = true;
+    image.onload = () => { if (active) setBrandLogo(image); };
+    image.onerror = () => { if (active) setStatus('Your logo could not be loaded. Reopen the studio or remove the logo in billing settings.'); };
+    image.src = brand.logo;
+    return () => { active = false; image.onload = null; image.onerror = null; };
+  }, [brand?.logo]);
 
   useEffect(() => {
     setNativeSharing(
@@ -62,16 +81,18 @@ export function ShareStudio({
       setReady(false);
       return;
     }
-    const font = "48px Arial, sans-serif";
+    const font = "400 48px Arial, sans-serif";
+    const questionFont = "700 48px Arial, sans-serif";
     ctx.font = font;
     const layout = layoutCard(
       body,
       format,
-      (text: string) => ctx.measureText(text).width,
+      (text: string) => { ctx.font=font; return ctx.measureText(text).width; },
+      {question:includeQuestion?question:'',measureQuestion:(text: string)=>{ctx.font=questionFont;return ctx.measureText(text).width;}},
     );
     const currentPage = Math.min(page, layout.pages.length - 1);
     setPages(layout.pages.length);
-    const colours = palettes[palette];
+    const colours = { ...palettes[palette], ...(brand && palette !== 'ink' ? { accent: brand.accent } : {}) };
     canvas.width = layout.width;
     canvas.height = layout.height;
     ctx.fillStyle = colours.background;
@@ -79,14 +100,17 @@ export function ShareStudio({
     ctx.fillStyle = colours.accent;
     ctx.fillRect(88, 85, 46, 4);
     ctx.font = "600 22px Arial, sans-serif";
-    ctx.fillText("ANONYMOUS WORDS", 152, 96);
+    ctx.fillText(layout.hasQuestion ? "QUESTION & ANSWER" : "ANONYMOUS WORDS", 152, 96);
     ctx.font = "italic 120px Georgia, serif";
-    ctx.fillText("“", 80, 255);
+    if(!layout.hasQuestion) ctx.fillText("“", 80, 255);
     ctx.font = font;
     ctx.fillStyle = colours.ink;
-    layout.pages[currentPage].forEach((line: string, i: number) =>
-      ctx.fillText(line, 88, layout.startY + i * layout.lineHeight),
-    );
+    layout.pageLines[currentPage].forEach((line: {text:string;kind:string}, i: number) => {
+      ctx.font = line.kind==='question' ? questionFont : font;
+      // Keep the question in our palette's purple, including the lighter dark-card shade.
+      ctx.fillStyle = line.kind==='question' ? palettes[palette].accent : colours.ink;
+      ctx.fillText(line.text, 88, layout.startY + i * layout.lineHeight);
+    });
     ctx.strokeStyle = colours.line;
     ctx.beginPath();
     ctx.moveTo(88, layout.footerY);
@@ -94,7 +118,9 @@ export function ShareStudio({
     ctx.stroke();
     ctx.fillStyle = colours.accent;
     ctx.font = "600 25px Arial, sans-serif";
-    ctx.fillText("UnsaidBox", 88, layout.footerY + 55);
+    if (brandLogo) ctx.drawImage(brandLogo, 88, layout.footerY + 16, 56, 56);
+    const attribution = [brand?.name, brand && hideAttribution ? '' : 'UnsaidBox'].filter(Boolean).join(' · ');
+    ctx.fillText(attribution, brandLogo ? 164 : 88, layout.footerY + 55, brandLogo ? 680 : 756);
     ctx.font = "22px Arial, sans-serif";
     ctx.textAlign = "right";
     ctx.fillText(
@@ -103,13 +129,14 @@ export function ShareStudio({
       layout.footerY + 55,
     );
     ctx.textAlign = "left";
-    setReady(Boolean(body.trim()));
-  }, [body, format, palette, page]);
+    setReady(Boolean(body.trim()) && (!brand?.logo || Boolean(brandLogo)));
+  }, [body, format, palette, page, brand, brandLogo, hideAttribution, includeQuestion, question]);
 
   function updateBody(value: string) {
     setBody(value);
     setPage(0);
     setStatus("");
+    setFacebookStatus("");
     setReady(false);
   }
   function changeSample(index: number) {
@@ -120,7 +147,7 @@ export function ShareStudio({
   async function copyText() {
     setStatus("");
     try {
-      await navigator.clipboard.writeText(body.trim());
+      await copyResponseText(body.trim());
       setStatus(
         "Response copied. Paste it where you want to share it. Nothing has been posted.",
       );
@@ -130,6 +157,36 @@ export function ShareStudio({
       setStatus(
         "Clipboard access isn’t available. The response is selected—use your device’s Copy command.",
       );
+    }
+  }
+
+  async function shareToFacebookPost() {
+    if (!validPost || !body.trim() || busy || facebookSharing.current) return;
+    facebookSharing.current = true;
+    setBusy(true);
+    setStatus("");
+    setFacebookStatus("");
+    try {
+      const result = await copyResponseAndOpenPost(body, validPost, {
+        copy: (text: string) => copyResponseText(text),
+        open: () => window.open('about:blank', '_blank'),
+      });
+      if (result === 'copy-failed') {
+        setBusy(false);
+        // Allow React to re-enable the textarea before selecting the manual fallback.
+        requestAnimationFrame(() => {
+          responseRef.current?.focus();
+          responseRef.current?.select();
+        });
+        setFacebookStatus('Clipboard access isn’t available. Select and copy the response above, then use Open original Facebook post below. Nothing has been posted.');
+      } else if (result === 'opened') {
+        setFacebookStatus('Response copied and Facebook opened in a new tab. Paste into a comment and submit it yourself. Nothing has been posted automatically.');
+      } else if (result === 'copied') {
+        setFacebookStatus('Response copied. Your browser could not open the new tab. Use Open original Facebook post below, then paste and submit your comment.');
+      }
+    } finally {
+      facebookSharing.current = false;
+      setBusy(false);
     }
   }
 
@@ -183,9 +240,8 @@ export function ShareStudio({
   }
 
   return (
-    <div className="studio-grid">
-      <div className="studio-controls">
-        <section className="panel">
+    <div className={`studio-grid ${styles.studio}`}>
+        <section className={`panel ${styles.editor}`}>
           <div className="panel-title">
             <span className="step-number">01</span>
             <h2>Choose your words</h2>
@@ -227,19 +283,65 @@ export function ShareStudio({
             identifying details before sharing. Editing this export does not
             change any original submission.
           </p>
-          <button
-            className="button secondary full"
-            disabled={!body.trim() || busy}
-            onClick={copyText}
-          >
-            Copy response text <span aria-hidden="true">⧉</span>
-          </button>
+
         </section>
-        <section className="panel">
+      <aside id="share-preview" className={`studio-preview ${styles.preview}`}>
+        <div className="preview-heading">
+          <div><span className="eyebrow">LIVE PREVIEW</span><h2>Your finished card</h2></div>
+          <span className="fine">
+            {cardFormats[format].width} × {cardFormats[format].height} PNG
+          </span>
+        </div>
+        <div className={`canvas-stage ${format}`}>
+          <canvas
+            ref={canvasRef}
+            aria-label={`Share card ${page + 1} of ${pages}.${includeQuestion && question.trim() ? ` Question included in bold: ${question}.` : ''} Full response text is available in the editable field.`}
+          />
+        </div>
+        <div className="pagination">
+          <button
+            className="button secondary small"
+            disabled={page === 0 || busy}
+            aria-label="Previous card"
+            onClick={() => {
+              setPage((value) => value - 1);
+              setStatus("");
+            }}
+          >
+            ←
+          </button>
+          <span>
+            Card {page + 1} of {pages}
+          </span>
+          <button
+            className="button secondary small"
+            disabled={page + 1 >= pages || busy}
+            aria-label="Next card"
+            onClick={() => {
+              setPage((value) => value + 1);
+              setStatus("");
+            }}
+          >
+            →
+          </button>
+        </div>
+        <p className="fine">
+          {pages > 1
+            ? "Long response? Each numbered card keeps the text readable. Use the arrows to review each card, then download it in the sharing section below."
+            : "This is the exact image that will be downloaded. No screenshot or cropping needed."}
+        </p>
+        <section className={`panel ${styles.design}`}>
           <div className="panel-title">
             <span className="step-number">02</span>
             <h2>Make it feel like you</h2>
           </div>
+          <p className="fine">Choose a size and colour. Your preview updates as you go.</p>
+          {question.trim()?<div className={styles.questionOption}>
+            <Checkbox checked={includeQuestion} disabled={busy} onChange={event=>{
+              setIncludeQuestion(event.target.checked);setPage(0);setReady(false);setStatus('');
+            }}>Include the question on the card</Checkbox>
+            <p className="fine">The question appears in bold before the answer. Long text continues across numbered cards.</p>
+          </div>:null}
           <fieldset disabled={busy}>
             <legend>Card format</legend>
             <div className="format-picker">
@@ -299,90 +401,48 @@ export function ShareStudio({
             </div>
           </fieldset>
         </section>
-        <section className="panel">
+        {question.trim()?<details className="source-details">
+          <summary>Question behind this response</summary>
+          <p>{question}</p>
+        </details>:null}
+      </aside>
+
+        {brand ? <section className={styles.branding} aria-labelledby="card-branding-title">
+          <span className="eyebrow">INCLUDED WITH PRO</span>
+          <h2 id="card-branding-title">Make this card yours</h2>
+          <p>Remove the UnsaidBox name before you download or share.</p>
+          <Checkbox checked={hideAttribution} disabled={busy} onChange={event => {
+            setHideAttribution(event.target.checked);
+            setReady(false);
+            setStatus('Branding updated for this card and all its pages.');
+          }}>Remove UnsaidBox branding</Checkbox>
+          <p className={styles.help}>{hideAttribution ? 'Your download will not include the UnsaidBox name.' : 'The UnsaidBox name is currently included.'} This choice applies to this share session.</p>
+          <Link href="/dashboard/billing" target="_blank" rel="noopener noreferrer">Set your default, name & logo ↗<span className={styles.help}> Opens branding settings in a new tab; your card stays here.</span></Link>
+        </section> : null}
+        <section className={`panel ${styles.audience}`}>
           <div className="panel-title">
             <span className="step-number">03</span>
             <h2>Take it to your audience</h2>
           </div>
-          <p>
-            Posting on a personal Facebook profile? Copy the text above, then
-            open your original post and paste it into a comment.
-          </p>
-          <label htmlFor="facebook-post">
-            Original Facebook post <span className="optional">optional</span>
-          </label>
-          <input
-            id="facebook-post"
-            type="url"
-            placeholder="https://www.facebook.com/…"
-            value={postUrl}
-            onChange={(event) => setPostUrl(event.target.value)}
-            aria-describedby="facebook-help"
-            aria-invalid={Boolean(postUrl && !validPost)}
-          />
-          <p id="facebook-help" className="fine">
-            {postUrl && !validPost
-              ? "Use an HTTPS link on facebook.com, www.facebook.com, or m.facebook.com."
-              : "We only open the link. We cannot automatically post comments to personal profiles."}
-          </p>
-          {validPost ? (
-            <a
-              className="button secondary full"
-              href={validPost}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open Facebook post ↗
-            </a>
-          ) : null}
-        </section>
-      </div>
-      <aside id="share-preview" className="studio-preview">
-        <div className="preview-heading">
-          <span className="eyebrow">YOUR SHARE CARD</span>
-          <span className="fine">
-            {cardFormats[format].width} × {cardFormats[format].height} PNG
-          </span>
-        </div>
-        <div className={`canvas-stage ${format}`}>
-          <canvas
-            ref={canvasRef}
-            aria-label={`Share card ${page + 1} of ${pages}. Full response text is available in the editable field.`}
-          />
-        </div>
-        <div className="pagination">
-          <button
-            className="button secondary small"
-            disabled={page === 0 || busy}
-            aria-label="Previous card"
-            onClick={() => {
-              setPage((value) => value - 1);
-              setStatus("");
-            }}
-          >
-            ←
-          </button>
-          <span>
-            Card {page + 1} of {pages}
-          </span>
-          <button
-            className="button secondary small"
-            disabled={page + 1 >= pages || busy}
-            aria-label="Next card"
-            onClick={() => {
-              setPage((value) => value + 1);
-              setStatus("");
-            }}
-          >
-            →
-          </button>
-        </div>
-        <p className="fine">
-          {pages > 1
-            ? "Long response? Each numbered card keeps the text readable. Download each card using the arrows above."
-            : "This is the exact image that will be downloaded. No screenshot or cropping needed."}
-        </p>
+          <p>Download your card, share the image, or post the response text. Choose what works for your audience.</p>
+          {validPost ? <div className={styles.originalPost}>
+            <h3>Original Facebook post</h3>
+            <p>Copy your edited response and open the post in one step. Then paste it into a comment and submit it on Facebook.</p>
+            <button type="button" className={`button full ${styles.facebookAction}`} disabled={!body.trim() || busy} onClick={shareToFacebookPost}>
+              Copy response &amp; open Facebook post <span aria-hidden="true">↗</span>
+            </button>
+            <p className={styles.facebookHint}>Opens a new tab. Nothing is posted automatically.</p>
+            <p className="action-status" role="status" aria-live="polite">{facebookStatus}</p>
+            <a href={validPost} target="_blank" rel="noopener noreferrer">Open original Facebook post ↗</a>
+          </div> : null}
         <div className="stack">
+          <button
+            className="button secondary full"
+            disabled={!body.trim() || busy}
+            onClick={copyText}
+          >
+            Copy response text <span aria-hidden="true">⧉</span>
+          </button>
           <button
             className="button full"
             disabled={!ready || busy}
@@ -410,11 +470,8 @@ export function ShareStudio({
           Exporting does not publish anything on UnsaidBox. Social sharing is
           always your choice.
         </p>
-        <details className="source-details">
-          <summary>Question behind this response</summary>
-          <p>{question}</p>
-        </details>
-      </aside>
+
+        </section>
     </div>
   );
 }

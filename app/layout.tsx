@@ -5,6 +5,9 @@ import "./auth.css";
 import "./controls.css";
 import "./contact.css";
 import "./privacy-controls.css";
+import "./theme.css";
+import {ThemeProvider} from "@/components/ThemeProvider";
+import {themeInitScript} from "@/lib/theme-init.mjs";
 import { CookieConsent } from "@/components/CookieConsent";
 import { measurementId } from "@/lib/analytics-policy.mjs";
 import { CaptchaProvider } from "@/components/Captcha";
@@ -25,15 +28,17 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: "#FAF9F6",
-  colorScheme: "light",
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth">
+    <html lang="en" data-scroll-behavior="smooth" data-theme="light" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{__html:themeInitScript}} /></head>
       <body>
+        <ThemeProvider>
         <a className="skip-link" href="#main">
           Skip to content
         </a>
@@ -51,6 +56,7 @@ export default function RootLayout({
               process.env.GOOGLE_ANALYTICS_TAG,
           )}
         />
+        </ThemeProvider>
       </body>
     </html>
   );

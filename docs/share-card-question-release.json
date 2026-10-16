@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-15T04:00:43.952Z",
+  "deployment": "dpl_7FHEjvsKAtr9a8UKNxMFEBBYFzbt",
+  "url": "https://unsaidbox.com",
+  "status": "READY",
+  "sourceCommit": "b90fb5e",
+  "workingTreeChangesIncluded": true,
+  "framework": "Next.js 15.5.25",
+  "buildSeconds": 43,
+  "cardTestsPassed": 8,
+  "typecheckPassed": true,
+  "localBrowserPreviewVerified": true,
+  "pngDownloadVerified": true,
+  "questionContrast": {
+    "paper": 6.13,
+    "lavender": 6.43,
+    "ink": 10
+  },
+  "homepage": 200,
+  "shareRouteRequiresLogin": true
+}

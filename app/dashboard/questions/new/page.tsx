@@ -1,36 +1,26 @@
-import { Checkbox } from "@/components/ui/Checkbox";
 import { requireAccount } from "@/lib/auth";
 import { DashboardShell } from "@/components/DashboardShell";
-import { ActionForm } from "@/components/ActionForm";
-import { createQuestion } from "@/app/actions";
+import { accountPlan } from '@/lib/plans';
+import { questionAIReady } from '@/lib/question-ideas';
+import { QuestionComposer } from './QuestionComposer';
+import Link from 'next/link';
+import styles from './questions.module.css';
 export default async function NewQuestion() {
   const a = await requireAccount();
+  let pro = false;
+  try { const plan = await accountPlan(a.id); pro = plan.enforced && plan.limits.aiQuestions; } catch { /* AI fails closed; manual composer remains available. */ }
   return (
     <DashboardShell
       accountId={a.id}
       name={a.displayName}
     >
-      <h1>Ask your audience.</h1>
-      <section className="panel editor-panel">
-        <ActionForm
-          action={createQuestion}
-          label="Create answer link"
-          captchaAction="createQuestion"
-        >
-          <label>
-            Your question
-            <textarea name="body" required maxLength={5000} rows={5} />
-          </label>
-          <Checkbox name="privateOnly">
-            Promise that answers stay private-only.
-          </Checkbox>
-          <p className="fine">
-            The link will accept answers immediately, with public visibility
-            off. No Facebook link is required. The sharing promise cannot be
-            loosened later.
-          </p>
-        </ActionForm>
-      </section>
+      <header className={styles.pageHeader}>
+        <Link href="/dashboard?view=questions" className={styles.backLink}>← All questions</Link>
+        <p className="eyebrow">YOUR AUDIENCE, THEIR HONEST ANSWERS</p>
+        <h1>Create a question</h1>
+        <p>Ask something meaningful. Share one link. Give your audience space to answer honestly.</p>
+      </header>
+      <QuestionComposer pro={pro} ready={questionAIReady()} />
     </DashboardShell>
   );
 }

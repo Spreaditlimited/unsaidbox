@@ -187,7 +187,7 @@
   margin: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #fff;
+  background: var(--color-surface);
   padding: 12px 14px 12px 44px;
   font-size: 15px;
   line-height: 24px;
@@ -198,7 +198,7 @@
 .auth-form-inner .auth-input-wrap input:focus-visible {
   outline: 0;
   border-color: var(--indigo);
-  box-shadow: 0 0 0 3px #5850b81a;
+  box-shadow: 0 0 0 3px var(--color-shadow);
 }
 .auth-form-inner .auth-input-wrap .auth-password-input {
   padding-right: 48px;
@@ -207,7 +207,7 @@
   position: absolute;
   left: 15px;
   top: 16px;
-  color: #9190a0;
+  color: var(--color-text-secondary);
   pointer-events: none;
 }
 .auth-password-toggle {
@@ -226,7 +226,7 @@
 }
 .auth-password-toggle:hover {
   color: var(--indigo);
-  background: #5850b807;
+  background: var(--color-surface-subtle);
 }
 .auth-field-hint {
   font-size: 11px;

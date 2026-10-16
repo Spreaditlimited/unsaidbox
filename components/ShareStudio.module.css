@@ -1,0 +1,70 @@
+.pageHeader { margin: 0 0 24px; max-width: 760px; }
+.pageHeader > a { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 16px; color: var(--muted); font-size: 13px; text-decoration: none; }
+.pageHeader :global(.eyebrow) { margin: 0 0 12px; }
+.pageHeader h1 { margin: 0 0 14px; font-size: clamp(30px, 3.4vw, 44px); line-height: 1.15; letter-spacing: -.04em; }
+.pageHeader > p:last-child { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
+.privacyNote { margin: 0 0 32px; padding: 16px 20px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-purple-bg); color: var(--color-text-secondary); font-size: 13px; line-height: 1.8; }
+.studio:global(.studio-grid) { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-areas: 'editor preview' 'branding preview' 'audience preview'; gap: 28px; margin-top: 0; }
+.editor { grid-area: editor; min-width: 0; }
+.preview { grid-area: preview; }
+.design { grid-area: design; min-width: 0; }
+.branding { grid-area: branding; }
+.branding h2 { scroll-margin-top: 24px; }
+.audience { grid-area: audience; min-width: 0; }
+.originalPost { margin: 0 0 24px; padding: 0 0 20px; border-bottom: 1px solid var(--line); }
+.originalPost h3 { margin: 0 0 8px; font-size: 14px; line-height: 1.5; }
+.originalPost p { margin: 0 0 10px; font-size: 13px; line-height: 1.8; color: var(--muted); }
+.originalPost a { display: inline-flex; align-items: center; min-height: 44px; color: var(--indigo); font-size: 14px; }
+.originalPost .facebookAction { min-height: 52px; padding: 14px 18px; white-space: normal; line-height: 1.5; text-align: center; }
+.originalPost .facebookHint { margin: 12px 0 0; font-size: 12px; }
+.originalPost :global(.action-status):empty { display: none; }
+.studio .audience :global(.action-status) { margin: 14px 0; }
+.studio .audience :global(.stack) { margin-bottom: 20px; }
+.studio .audience input + p { margin-top: 10px; }
+.studio :global(.studio-controls) { gap: 24px; min-width: 0; }
+.studio :global(.panel) { margin: 0; padding: clamp(22px, 2.5vw, 32px); border-radius: 16px; box-shadow: 0 4px 20px var(--color-shadow-soft); }
+.studio :global(.panel-title) { gap: 12px; margin: 0 0 18px; }
+.studio :global(.panel-title) h2 { margin: 0; font-size: 19px; line-height: 1.4; }
+.studio :global(.step-number) { display: grid; place-items: center; flex: 0 0 34px; height: 34px; border-radius: 10px; background: var(--color-purple-bg); color: var(--indigo); font-family: inherit; font-size: 12px; font-style: normal; }
+.studio :global(.panel) > p { margin: 0 0 22px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+.studio :global(.panel) > label { display: block; margin: 0 0 10px; font-size: 13px; }
+.studio .editor textarea { display: block; margin: 0; padding: 16px; min-height: 230px; max-height: 440px; resize: vertical; font-size: 16px; line-height: 1.8; font-weight: 400; background: var(--color-surface); }
+.studio .editor textarea + p { margin: 12px 0 20px; font-size: 12px; }
+.studio :global(.button) { margin-top: 0; }
+.studio fieldset { margin: 24px 0 0; }
+.studio legend { margin-bottom: 12px; font-size: 13px; }
+.studio :global(.studio-preview) { position: static; padding: clamp(18px, 2.2vw, 28px); background: var(--color-surface); border: 1px solid var(--line); border-radius: 16px; }
+.studio :global(.preview-heading) { flex-wrap: wrap; gap: 12px; margin: 0 0 22px; }
+.studio :global(.preview-heading) h2 { margin: 8px 0 0; font-size: 20px; line-height: 1.4; }
+.studio :global(.preview-heading) > span { font-size: 11px; }
+.studio :global(.canvas-stage) { min-height: 0; padding: 18px; background: var(--color-purple-bg); border-radius: 12px; }
+.studio :global(.canvas-stage) canvas { width: 100%; max-height: 380px; object-fit: contain; }
+.studio :global(.pagination) { margin: 18px 0; }
+.studio :global(.studio-preview) > p { font-size: 12px; line-height: 1.8; margin: 16px 0; }
+.studio :global(.stack) { display: grid; gap: 12px; }
+.studio :global(.stack) > button { margin: 0; min-height: 48px; }
+@media (max-width: 1050px) {
+  .studio:global(.studio-grid) { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'editor' 'preview' 'branding' 'audience'; gap: 28px; }
+  .studio .preview:global(.studio-preview) { border: 0; background: transparent; padding: 0; box-shadow: none; }
+  .studio .design, .studio .audience, .studio .branding { border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 28px 0 0; margin: 0; background: transparent; box-shadow: none; }
+}
+@media (max-width: 480px) {
+  .privacyNote { margin-bottom: 24px; padding: 16px; }
+  .studio :global(.panel), .studio :global(.studio-preview) { padding: 20px 16px; }
+  .studio :global(.format-picker) { gap: 6px; }
+  .studio :global(.choice) { flex-direction: column; gap: 10px; padding: 14px 6px; }
+  .studio :global(.palette-picker) { flex-wrap: wrap; }
+  .studio :global(.canvas-stage) { padding: 12px; }
+}
+.branding { margin: 20px 0; padding: 20px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-purple-bg); text-align: left; min-width: 0; }
+.branding h2 { margin: 8px 0; font-size: 18px; line-height: 1.4; }
+.branding p { margin: 8px 0 16px; font-size: 14px; line-height: 1.65; }
+.branding :global(.check) { min-height: 44px; margin: 0; align-items: flex-start; }
+.branding .help { display: block; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.branding a { display: block; padding: 10px 0; min-height: 44px; color: var(--indigo); font-size: 14px; overflow-wrap: anywhere; }
+.studio .preview .design { padding: 22px 0; margin: 18px 0; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); border-radius: 0; box-shadow: none; background: transparent; }
+
+.studio .questionOption { margin: 20px 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.studio .questionOption :global(.check) { display: flex; align-items: flex-start; flex-wrap: nowrap; gap: 10px; margin: 0; font-size: 14px; font-weight: 500; line-height: 1.6; }
+.studio .questionOption :global(.check-label) { flex: 1; min-width: 0; }
+.studio .questionOption :global(.fine) { margin: 8px 0 0 28px; font-size: 12px; line-height: 1.6; }

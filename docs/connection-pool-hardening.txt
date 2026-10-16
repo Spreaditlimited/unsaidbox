@@ -1,0 +1,37 @@
+CONNECTION POOL HARDENING — 7 October 2026
+
+Incident: UnsaidBox Router max_total_connections=10 rejected connections while
+MySQL itself had spare capacity (13/200 connected, historical peak 90).
+Owner raised the dedicated Router limit to 50 and restarted Router, not MySQL.
+Owner confirmed public and admin pages recovered.
+
+Application policy in lib/runtime-database-url.mjs:
+- Vercel: one connection per warm Prisma client/instance.
+- Local: at most three; preserve stricter positive limits.
+- Connect and pool acquisition timeout at most 10 seconds, never unlimited.
+- Maximum idle connection lifetime at most 30 seconds.
+- Missing, zero, duplicate or invalid pool settings normalize to safe bounds.
+- Preserve dedicated database, credentials, host/tunnel and strict TLS validation.
+- Vercel uses the bundled CA; local certificate paths remain unchanged.
+- Existing global singleton remains; no new per-request clients, disconnects,
+  overload retry loops or automatic retries of possibly committed writes.
+
+Restart local dev to replace its existing cached client after this change.
+Production code must be explicitly deployed before the runtime policy is live.
+Router configuration is already changed; it does not require an app deployment.
+
+Limitations: each Vercel instance owns its own pool; this is not a global cap.
+Autoscaling, concurrent deployments and other clients still consume Router slots.
+Idle cleanup depends on engine/runtime scheduling; a frozen function cannot run
+timers. Monitor Router warnings and MySQL headroom, rather than promising that
+per-instance pooling makes connection exhaustion impossible.
+
+Read-only verification: node scripts/verify-pool-and-schedule.mjs
+Twelve parallel SQL queries reused one connection using the production policy.
+All thirteen article and cover SQL gates were tested just before and exactly at
+their saved publication timestamps, without modifying public visibility.
+
+References:
+https://www.prisma.io/docs/orm/v6/prisma-client/setup-and-configuration/databases-connections
+https://www.prisma.io/docs/orm/v6/prisma-client/setup-and-configuration/databases-connections/connection-pool
+https://dev.mysql.com/doc/mysql-router/8.0/en/mysql-router-conf-options.html

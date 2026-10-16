@@ -1,0 +1,26 @@
+.page { display: grid; gap: 32px; min-width: 0; }
+.header { display: grid; gap: 16px; min-width: 0; }
+.header > h1, .header > p { margin: 0; }
+.header > :global(.eyebrow) { margin-bottom: -8px; }
+.header > p:not(:global(.eyebrow)) { max-width: 68ch; line-height: 1.75; }
+.header > a { justify-self: start; }
+.header > :global(.text-link) { margin-bottom: 8px; }
+.header > :global(.button) { margin-top: 8px; }
+.list { display: grid; gap: 20px; min-width: 0; }
+.list:empty, .pagination:empty { display: none; }
+.card { display: grid; gap: 20px; min-width: 0; padding: 28px; }
+.card > :global(.badge) { justify-self: start; white-space: normal; }
+.card > :global(.message-text) { margin: 0; line-height: 1.75; overflow-wrap: anywhere; }
+.actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 20px; border-top: 1px solid var(--line); }
+.actions > span { margin: 0; }
+.actions > a { margin: 0; }
+.pagination { display: flex; flex-wrap: wrap; gap: 12px; }
+.conversation > section { margin-top: 0; }
+@media (max-width: 600px) {
+  .page { gap: 28px; }
+  .header { gap: 16px; }
+  .list .card { padding: 20px; }
+  .actions { display: grid; gap: 14px; }
+  .actions > a, .header > :global(.button) { width: 100%; justify-self: stretch; white-space: normal; text-align: center; }
+  .header > :global(.button) { margin-top: 8px; }
+}

@@ -132,6 +132,14 @@ test("stale edits and slug collisions cannot overwrite another change", async ()
   assert.match((await collision.save()).error, /reserved/);
   assert.equal(collision.state.audits.length, 0);
 });
+test("the actual scheduling action interprets editor values as UK local time", async () => {
+  const f = await fixture();
+  await assert.rejects(f.save(form({ operation: 'schedule', publishDate: '2099-07-10', publishTime: '09:00', publishTimezone: 'Europe/London' })), /redirect:/);
+  assert.equal(f.state.posts.post1.publishAt.toISOString(), '2099-07-10T08:00:00.000Z');
+  const editor = await readFile('components/blog/BlogEditor.tsx', 'utf8');
+  assert.match(editor, /name="publishTimezone"/);
+  assert.match(editor, /publicationFields/);
+});
 test("deletion requires explicit confirmation and a draft", async () => {
   const published = await fixture({ published: true });
   assert.match((await published.remove(form({ confirm: "DELETE" }))).error, /Unpublish/);
@@ -146,7 +154,8 @@ test("public article, media, sitemap and feed all enforce scheduled visibility",
   }
   for (const file of ["app/admin/blog/page.tsx", "app/admin/blog/new/page.tsx", "app/admin/blog/[id]/page.tsx", "app/admin/blog/[id]/preview/page.tsx"]) assert.match(await readFile(file, "utf8"), /await requireAdministrator\(\)/, file);
   const image = await readFile("lib/blog-image.ts", "utf8");
-  assert.doesNotMatch(image, /published:\s*true|rejectUnauthorized:\s*false|cloudinary|tochukwunkwocha/i);
+  assert.doesNotMatch(image, /published:\s*true|rejectUnauthorized:\s*false|tochukwunkwocha/i);
+  assert.match(image, /await uploadBlogCover/);
   assert.match(image, /imageLock: lock/);
   const route = await readFile("app/admin/blog/[id]/image/route.ts", "utf8");
   assert.match(route, /currentAdministrator\(/);

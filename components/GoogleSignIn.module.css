@@ -1,0 +1,12 @@
+.social { margin: 24px 0; }
+.social :global(.app-form) { margin: 0; }
+.social :global(.app-form) > :global(.button) { width: 100%; margin: 0; gap: 12px; background: white; color: #202332; border: 1px solid #c6c7d0; box-shadow: 0 1px 2px #20233208; }
+.social :global(.app-form) > :global(.button)::before { content: ''; width: 20px; height: 20px; flex: 0 0 20px; background: url('/brand/google-g.svg') center / contain no-repeat; }
+.social :global(.app-form) > :global(.button):hover { background: #f7f7fb; border-color: #5850b8; }
+.empty { display: none; }
+.apple { margin-top: 12px; }
+.apple :global(.app-form) > :global(.button) { background: #000; color: #fff; border-color: #000; }
+.apple :global(.app-form) > :global(.button):hover { background: #222; border-color: #222; }
+.apple :global(.app-form) > :global(.button)::before { background-image: url('/brand/apple.svg'); }
+.divider { display: flex; align-items: center; gap: 16px; color: var(--muted); font-size: 12px; margin-top: 24px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }

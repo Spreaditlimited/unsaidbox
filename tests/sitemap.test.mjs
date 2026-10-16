@@ -23,13 +23,13 @@ async function sitemap(fail = false) {
 }
 test("sitemap includes public information pages and only publication-filtered blog posts", async () => {
   const { entries, query } = await sitemap();
-  assert.deepEqual(Array.from(entries, e => e.url), ["", "/blog", "/templates", "/contact", "/safety", "/cookies", "/blog/published-guide"].map(path => blogOrigin + path));
+  assert.deepEqual(Array.from(entries, e => e.url), ["", "/blog", "/templates", "/pricing", "/contact", "/safety", "/terms", "/cookies", "/blog/published-guide"].map(path => blogOrigin + path));
   assert.equal(query.where.published, true);
   assert.ok(query.where.publishAt.lte instanceof Date);
 });
 test("database failure leaves a usable static sitemap without exposing connection details", async () => {
   const { entries, logs } = await sitemap(true);
-  assert.equal(entries.length, 6);
+  assert.equal(entries.length, 8);
   assert.equal(entries[0].url, blogOrigin);
   assert.equal(logs.length, 1);
   assert.doesNotMatch(logs[0], /private database details/);

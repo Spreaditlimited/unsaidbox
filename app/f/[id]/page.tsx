@@ -1,5 +1,8 @@
+import {ThemePicker} from "@/components/ThemePicker";
 import Link from "next/link";
 import { randomUUID } from "node:crypto";
+import { token } from '@/lib/security.mjs';
+import { followupsReady } from '@/lib/followups';
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { parseQuestions } from "@/lib/form-policy.mjs";
@@ -40,7 +43,7 @@ export default async function FeedbackPage({
   if (!f) notFound();
   return (
     <main id="main" className={`feedback-public feedback-theme-${f.theme}`}>
-      <div className="feedback-sheet">
+      <div className="feedback-sheet"><div className="standalone-appearance"><ThemePicker/></div>
         <header className="feedback-sheet-header">
           {f.image ? (
             <img
@@ -68,6 +71,7 @@ export default async function FeedbackPage({
               questions={parseQuestions(f.questions) as FormQuestion[]}
               allowSharing={f.allowSharing}
               requestKey={randomUUID()}
+              followupToken={await followupsReady() ? token() : undefined}
             />
           ) : (
             <div className="feedback-empty">

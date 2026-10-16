@@ -35,6 +35,7 @@ model Administrator {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   sessions AdministratorSession[]
+  customerNotes AdministratorCustomerNote[]
 }
 
 model AdministratorSession {
@@ -68,6 +69,126 @@ model Account {
   emailPreference    EmailPreference?
   emailDeliveries    EmailDelivery[]
   feedbackForms      FeedbackForm[]
+  billingCustomers   BillingCustomer[]
+  planUsage          PlanUsage[]
+  brandSettings      BrandSettings?
+  socialIdentities   SocialIdentity[]
+  followups          FollowupConversation[]
+  activity AccountActivity?
+  exportPresets ExportPreset[]
+  exportJobs ExportJob[]
+  customerNotes AdministratorCustomerNote[]
+  marketingConsent MarketingConsent?
+  marketingEvents MarketingConsentEvent[]
+}
+
+model SocialIdentity {
+  provider String @db.VarChar(20)
+  subject String @db.VarChar(255)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([provider, subject])
+  @@unique([accountId, provider])
+}
+
+model MarketingConsent {
+  accountId String @id @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  subscribed Boolean @default(false)
+  statement String @db.VarChar(500)
+  version String @db.VarChar(40)
+  source String @db.VarChar(30)
+  chosenAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MarketingConsentEvent {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  subscribed Boolean
+  statement String @db.VarChar(500)
+  version String @db.VarChar(40)
+  source String @db.VarChar(30)
+  createdAt DateTime @default(now())
+  @@index([accountId, createdAt])
+}
+
+// Serialize audience changes with campaign submission. Seeded by the migration.
+model MarketingControl {
+  id Int @id
+  revision Int @default(0)
+}
+
+model MarketingLead {
+  id String @id @default(cuid()) @db.VarChar(30)
+  email String @unique @db.VarChar(254)
+  firstName String @db.VarChar(80)
+  subscribed Boolean @default(false)
+  consentStatement String @db.VarChar(500)
+  consentVersion String @db.VarChar(40)
+  consentedAt DateTime
+  requestedAt DateTime
+  confirmedAt DateTime?
+  withdrawnAt DateTime?
+  tokenHash String? @unique @db.VarChar(64)
+  tokenExpiresAt DateTime?
+  events MarketingLeadEvent[]
+}
+
+model MarketingLeadEvent {
+  id String @id @default(cuid()) @db.VarChar(30)
+  leadId String @db.VarChar(30)
+  lead MarketingLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  choice String @db.VarChar(30)
+  statement String @db.VarChar(500)
+  version String @db.VarChar(40)
+  createdAt DateTime @default(now())
+  @@index([leadId, createdAt])
+}
+
+model MarketingCampaign {
+  id String @id @default(cuid()) @db.VarChar(30)
+  subject String @db.VarChar(200)
+  heading String @db.VarChar(200)
+  preheader String @db.VarChar(200)
+  body String @db.Text
+  status String @default("DRAFT") @db.VarChar(30)
+  providerId Int? @unique
+  recipientCount Int?
+  createdBy String @db.VarChar(30)
+  createdAt DateTime @default(now())
+  submittedAt DateTime?
+  @@index([createdAt])
+}
+
+model OAuthAttempt {
+  tokenHash String @id @db.VarChar(64)
+  browserHash String @db.VarChar(64)
+  kind String @db.VarChar(20)
+  payload Json
+  expiresAt DateTime
+  @@index([expiresAt])
+}
+
+model PlanUsage {
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  month String @db.VarChar(96)
+  submissions Int @default(0)
+  updatedAt DateTime @updatedAt
+  @@id([accountId, month])
+}
+
+model BrandSettings {
+  accountId String @id @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  name String @db.VarChar(60)
+  accent String @db.VarChar(7)
+  hideAttribution Boolean @default(false)
+  logo Bytes? @db.Blob
+  updatedAt DateTime @updatedAt
 }
 
 model EmailPreference {
@@ -135,12 +256,14 @@ model Submission {
   body          String           @db.Text
   ownerReply    String?          @db.Text
   publicBody    String?          @db.Text
+  exportPermission ResponseExportPermission?
   status        SubmissionStatus @default(PENDING)
   publicVisible Boolean          @default(false)
   // Snapshot at submission: later settings must not loosen the sender's promise.
   sharingPolicy SharingPolicy    @default(OWNER_MAY_SHARE)
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+  followup      FollowupConversation?
 
   @@index([accountId, status, createdAt])
   @@index([questionId, accountId, publicVisible])
@@ -186,6 +309,73 @@ model AuditEvent {
   createdAt DateTime @default(now())
 }
 
+// Desired catalogue prices only. Saving does not modify Stripe subscriptions.
+model BillingConfiguration {
+  id String @id @db.VarChar(30)
+  prices Json
+  revision Int @default(1)
+  updatedBy String? @db.VarChar(30)
+  updatedAt DateTime @updatedAt
+}
+
+model BillingCustomer {
+  id String @id @db.VarChar(64)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Restrict)
+  mode String @db.VarChar(10)
+  stripeCustomerId String? @db.VarChar(255)
+  lockToken String? @db.VarChar(64)
+  lockUntil DateTime?
+  checkoutKey String? @db.VarChar(64)
+  checkoutParams Json?
+  checkoutStartedAt DateTime?
+  checkoutSessionId String? @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  subscriptions BillingSubscription[]
+  history BillingHistory[]
+  @@unique([accountId, mode])
+  @@unique([mode, stripeCustomerId])
+}
+
+model BillingPrice {
+  id String @id @db.VarChar(64)
+  mode String @db.VarChar(10)
+  catalogRevision Int
+  priceKey String @db.VarChar(30)
+  stripePriceId String @db.VarChar(255)
+  stripeProductId String @db.VarChar(255)
+  amount Int
+  currency String @db.VarChar(3)
+  interval String @db.VarChar(10)
+  createdAt DateTime @default(now())
+  @@unique([mode, catalogRevision, priceKey])
+  @@unique([mode, stripePriceId])
+}
+
+model BillingSubscription {
+  id String @id @db.VarChar(255)
+  customerId String @db.VarChar(64)
+  customer BillingCustomer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  mode String @db.VarChar(10)
+  stripePriceId String @db.VarChar(255)
+  status String @db.VarChar(30)
+  recognized Boolean @default(false)
+  cancelAtPeriodEnd Boolean @default(false)
+  periodEnd DateTime?
+  allowanceAnchor DateTime? @db.DateTime(3)
+  paidThrough DateTime?
+  syncedAt DateTime @default(now())
+  @@index([customerId, mode])
+}
+
+model BillingEvent {
+  id String @id @db.VarChar(255)
+  mode String @db.VarChar(10)
+  type String @db.VarChar(100)
+  processedAt DateTime @default(now())
+}
+
 model BlogPost {
   id String @id @default(cuid()) @db.VarChar(30)
   slug String @unique @db.VarChar(160)
@@ -222,6 +412,8 @@ model BlogImage {
   post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
   image Bytes @db.MediumBlob
   version String @db.VarChar(32)
+  cloudinaryPublicId String? @db.VarChar(255)
+  cloudinaryUrl String? @db.VarChar(1000)
   updatedAt DateTime @updatedAt
 }
 
@@ -260,8 +452,44 @@ model FeedbackEntry {
   shareAllowed Boolean @default(false)
   createdAt DateTime @default(now())
   answers FeedbackAnswer[]
+  review FeedbackEntryReview?
+  exportPermission ResponseExportPermission?
+  followup FollowupConversation?
   @@unique([formId, requestKey])
   @@index([formId, createdAt])
+}
+
+// Only token hashes are stored. Private replies never enter publication/export queries.
+model FollowupConversation {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  submissionId String? @unique @db.VarChar(30)
+  submission Submission? @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  entryId String? @unique @db.VarChar(30)
+  entry FeedbackEntry? @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  tokenHash String @unique @db.VarChar(64)
+  closedAt DateTime?
+  expiresAt DateTime
+  messageCount Int @default(0)
+  lastSenderAt DateTime?
+  lastOwnerAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages FollowupMessage[]
+  @@index([accountId, updatedAt])
+}
+
+model FollowupMessage {
+  id String @id @default(cuid()) @db.VarChar(30)
+  conversationId String @db.VarChar(30)
+  conversation FollowupConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  author String @db.VarChar(10)
+  body String @db.Text
+  requestKey String @db.VarChar(36)
+  createdAt DateTime @default(now())
+  @@unique([conversationId, requestKey])
+  @@index([conversationId, createdAt])
 }
 
 model FeedbackAnswer {
@@ -274,4 +502,148 @@ model FeedbackAnswer {
   textValue String? @db.Text
   numberValue Int?
   @@unique([entryId, questionId])
+}
+
+model AccountActivity {
+  accountId String @id @db.VarChar(30)
+  lastLoginAt DateTime? @db.DateTime(3)
+  lastDashboardAt DateTime? @db.DateTime(3)
+  firstQuestionAt DateTime? @db.DateTime(3)
+  firstFormAt DateTime? @db.DateTime(3)
+  firstResponseAt DateTime? @db.DateTime(3)
+  createdAt DateTime @default(now()) @db.DateTime(3)
+  updatedAt DateTime @default(now()) @updatedAt @db.DateTime(3)
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([lastDashboardAt])
+}
+
+model FeedbackEntryReview {
+  entryId String @id @db.VarChar(30)
+  status String @default("NEW") @db.VarChar(20)
+  starred Boolean @default(false)
+  tags Json?
+  note String? @db.Text
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  entry FeedbackEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  @@index([status])
+  @@index([starred])
+}
+
+model ExportPreset {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  name String @db.VarChar(100)
+  source String @db.VarChar(20)
+  purpose String @default("SHARING") @db.VarChar(20)
+  format String @default("CSV") @db.VarChar(20)
+  layout String @default("LONG") @db.VarChar(20)
+  timezone String @default("UTC") @db.VarChar(64)
+  filters Json
+  columns Json
+  schemaVersion Int @default(1)
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@index([accountId, updatedAt])
+}
+
+model ExportJob {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  requestKey String @db.VarChar(64)
+  source String @db.VarChar(20)
+  purpose String @default("SHARING") @db.VarChar(20)
+  format String @default("CSV") @db.VarChar(20)
+  layout String @default("LONG") @db.VarChar(20)
+  timezone String @default("UTC") @db.VarChar(64)
+  filters Json
+  columns Json
+  schemaVersion Int @default(1)
+  policyVersion String @db.VarChar(40)
+  status String @default("QUEUED") @db.VarChar(20)
+  snapshotAt DateTime @default(now())
+  checkpoint Json?
+  matchingRecords Int?
+  eligibleRecords Int?
+  excludedRecords Int?
+  processedRecords Int @default(0)
+  outputRows Int @default(0)
+  attempts Int @default(0)
+  nextAttemptAt DateTime @default(now())
+  lockToken String? @db.VarChar(64)
+  lockedUntil DateTime?
+  lastErrorCode String? @db.VarChar(80)
+  storageKey String? @db.VarChar(1000)
+  fileName String? @db.VarChar(200)
+  mimeType String? @db.VarChar(100)
+  fileBytes BigInt?
+  checksumSha256 String? @db.VarChar(64)
+  startedAt DateTime?
+  completedAt DateTime?
+  expiresAt DateTime?
+  revokedAt DateTime?
+  lastDownloadedAt DateTime?
+  downloadCount Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  @@unique([accountId, requestKey])
+  @@index([accountId, createdAt])
+  @@index([accountId, status])
+  @@index([status, nextAttemptAt])
+  @@index([lockedUntil])
+  @@index([expiresAt])
+}
+
+// Exactly one target is required by the permission creation service.
+// Missing rows must never grant analysis export permission.
+model ResponseExportPermission {
+  id String @id @default(cuid()) @db.VarChar(30)
+  submissionId String? @unique @db.VarChar(30)
+  entryId String? @unique @db.VarChar(30)
+  noticeVersion String @db.VarChar(40)
+  privateAnalysisAllowed Boolean @default(false)
+  recordedAt DateTime @default(now())
+  revokedAt DateTime?
+  submission Submission? @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  entry FeedbackEntry? @relation(fields: [entryId], references: [id], onDelete: Cascade)
+}
+
+model AdministratorCustomerNote {
+  id String @id @default(cuid()) @db.VarChar(30)
+  accountId String @db.VarChar(30)
+  administratorId String @db.VarChar(30)
+  body String @db.Text
+  createdAt DateTime @default(now())
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  administrator Administrator @relation(fields: [administratorId], references: [id], onDelete: Restrict)
+  @@index([accountId, createdAt])
+  @@index([administratorId])
+}
+
+model BillingHistory {
+  id String @id @default(cuid()) @db.VarChar(30)
+  customerId String @db.VarChar(64)
+  mode String @db.VarChar(10)
+  provider String @default("STRIPE") @db.VarChar(20)
+  eventKey String @db.VarChar(255)
+  eventType String @db.VarChar(100)
+  objectId String? @db.VarChar(255)
+  subscriptionId String? @db.VarChar(255)
+  status String? @db.VarChar(40)
+  currency String? @db.VarChar(3)
+  amountPaid BigInt?
+  amountRefunded BigInt?
+  taxAmount BigInt?
+  summary Json?
+  occurredAt DateTime
+  recordedAt DateTime @default(now())
+  customer BillingCustomer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  @@unique([provider, mode, eventKey])
+  @@index([customerId, occurredAt])
+  @@index([mode, eventType, occurredAt])
+  @@index([subscriptionId])
 }

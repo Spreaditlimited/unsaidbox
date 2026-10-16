@@ -33,8 +33,8 @@ export async function saveBlog(id: string | null, _: Result, form: FormData): Pr
     if (operation !== "draft") validatePublication(data);
     let publishAt: Date | null = null;
     if (operation === "schedule") {
-      publishAt = publicationDate(String(form.get("publishDate") || ""), String(form.get("publishTime") || ""));
-      if (publishAt <= new Date()) throw new InputError("Choose a future publication time in UTC.");
+      publishAt = publicationDate(String(form.get("publishDate") || ""), String(form.get("publishTime") || ""), String(form.get("publishTimezone") || "UTC"));
+      if (publishAt <= new Date()) throw new InputError("Choose a future publication time in the displayed timezone.");
     }
     await db().$transaction(async tx => {
       const previous = id ? await tx.blogPost.findUnique({ where: { id } }) : null;

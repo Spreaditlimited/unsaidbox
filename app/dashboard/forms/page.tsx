@@ -36,7 +36,7 @@ export default async function FormsPage({
   ]);
   return (
     <DashboardShell accountId={a.id} name={a.displayName} section="forms">
-      <div className="app-heading">
+      <div className="app-heading workspace-heading feedback-list-heading">
         <div className="feedback-page-heading">
           <span className="eyebrow">YOUR SPACE TO LISTEN</span>
           <h1>Forms & feedback.</h1>

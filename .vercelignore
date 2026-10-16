@@ -14,3 +14,12 @@ coverage
 .auth
 test-results
 playwright-report
+output
+docs
+tests
+generated
+scripts
+socials
+.data
+*.txt
+AGENTS.md

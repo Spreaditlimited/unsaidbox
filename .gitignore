@@ -16,4 +16,5 @@ generated/
 playwright-report/
 test-results/
 .auth/
+output/editorial-backups/
 .vercel

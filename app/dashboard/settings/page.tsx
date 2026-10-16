@@ -9,6 +9,7 @@ import { ProfilePhotoEditor } from "@/components/ProfilePhotoEditor";
 import { avatarState } from "@/lib/avatar";
 import { emailSettings } from "@/lib/email";
 import { resendVerification, saveEmailPreferences } from "@/app/email-actions";
+import { MarketingPreferences } from '@/components/MarketingPreferences';
 export default async function Settings() {
   const a = await requireAccount();
   const avatar = await avatarState(a.id);
@@ -16,6 +17,7 @@ export default async function Settings() {
   return (
     <DashboardShell
       accountId={a.id}
+      showMarketingPrompt={false}
       name={a.displayName}
     >
       <h1>Your box, your boundaries.</h1>
@@ -145,6 +147,7 @@ export default async function Settings() {
           </>
         )}
       </section>
+      <MarketingPreferences accountId={a.id} />
     </DashboardShell>
   );
 }

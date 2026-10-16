@@ -1,0 +1,98 @@
+[
+  {
+    "index": 0,
+    "slug": "followers-questions",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-057b96d9-3f85-49ba-8099-dbb1b88d19c2.png",
+    "output": "output/blog-covers/followers-questions.webp",
+    "prompt": "Premium tactile paper-and-ceramic UnsaidBox 16:9 cover: open ivory box surrounded by five groups of question cards, navy, coral and lavender on warm ivory, soft shadows, no readable words, logos or people.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 1,
+    "slug": "question-box",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-f249ac40-91ad-4c50-9b17-a1d7f74251b2.png",
+    "output": "output/blog-covers/question-box.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, crisp thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces, people or interface screenshot. Subject: One open ivory ceramic box with a single navy question card standing inside, a coral ribbon loosely beside it. No flowers or additional props.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 2,
+    "slug": "anonymous-qa",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-0d23b2d4-0cd3-4c90-8664-18cd4408fc59.png",
+    "output": "output/blog-covers/anonymous-qa.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, crisp thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces, people or interface screenshot. Subject: Three blank question cards moving in an elegant arc from a small ivory box toward a navy freestanding presentation board with blank speech-bubble shapes. No people.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 3,
+    "slug": "open-ended-course",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-9667abcc-8b4d-4cc6-80d6-f7dca34c8388.png",
+    "output": "output/blog-covers/open-ended-course.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, crisp thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces, people or interface screenshot. Subject: An open blank workbook, several blank feedback cards, and one coral pencil, overhead composition, quiet learning atmosphere.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 4,
+    "slug": "suggestion-box",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-29048502-dea4-4806-85b8-6157a24c84f9.png",
+    "output": "output/blog-covers/suggestion-box.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, crisp thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces, people or interface screenshot. Subject: An ivory suggestion box with a narrow slot, surrounded by three small sculptural paper houses suggesting community, one coral idea card beside the slot.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 5,
+    "slug": "training-feedback",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-7e5ea18a-5bcd-4a56-89e9-239eb59b2d1a.png",
+    "output": "output/blog-covers/training-feedback.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: A small workshop workspace: blank exercise cards, a navy-edged open notebook and one coral pencil, a neatly completed arrangement suggesting practical learning.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 6,
+    "slug": "followers-feedback",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-f81037dc-b0e1-4aa0-839d-26c48abc31ef.png",
+    "output": "output/blog-covers/followers-feedback.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: Three neat stacks of blank audience feedback cards beside a small editorial planning notebook, one stack navy, one ivory, one muted coral, overhead composition.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 7,
+    "slug": "social-questions",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-a75fda8f-99d9-4d43-b9c6-00f2b942ab1d.png",
+    "output": "output/blog-covers/social-questions.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: A simple upright phone frame with a blank rounded message card, joined by a loose coral ribbon to an open ivory collection box. No app logos or interface text.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 8,
+    "slug": "relationship-questions",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-dd7cc66d-3725-40cd-a209-9f45d91ff54c.png",
+    "output": "output/blog-covers/relationship-questions.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: Two abstract paper speech bubbles facing each other above a small coral paper heart, calm respectful composition with generous space.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 9,
+    "slug": "share-responses",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-6489e854-dde7-45bb-94d3-a894cb4c0484.png",
+    "output": "output/blog-covers/share-responses.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: A single clean ivory response card lifted out of a layered navy dashboard-like stack into a simple upright phone frame, abstract shapes only, no UI text.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 10,
+    "slug": "anonymous-confidential",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-13215e24-6713-4cdc-9233-aa2f8f683813.png",
+    "output": "output/blog-covers/anonymous-confidential.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: An unlabelled blank message card beside a closed ivory envelope, separated by a quiet navy divider, a subtle coral accent, visual contrast between open anonymity and controlled access.",
+    "mode": "built-in image_gen"
+  },
+  {
+    "index": 11,
+    "slug": "moderation",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-58afd67b-f966-46ab-bd94-af88fac9ea04.png",
+    "output": "output/blog-covers/moderation.webp",
+    "prompt": "Use case: stylized-concept. Asset: UnsaidBox blog cover 16:9 landscape, premium tactile paper-and-ceramic still life, warm ivory background, ink navy, restrained coral and faint lavender, soft daylight, generous crop-safe margins, thoughtful editorial composition. No readable words, letters, numbers, logos, watermarks, faces or people. Subject: A small stack of blank message cards passing through a sculptural navy review frame with a single coral card bearing a simple checkmark on the other side.",
+    "mode": "built-in image_gen"
+  }
+]

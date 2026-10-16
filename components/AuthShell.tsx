@@ -1,5 +1,7 @@
+import {ThemePicker} from "./ThemePicker";
 import Link from "next/link";
 import { Brand, Mark } from "./Brand";
+import { CaptchaNoticeGroup } from "./Captcha";
 
 export function AuthShell({
   children,
@@ -50,11 +52,11 @@ export function AuthShell({
         </div>
       </aside>
       <section className="auth-form-side">
-        <div className="auth-form-inner">
+        <div className="auth-form-inner"><div className="auth-appearance"><ThemePicker/></div>
           <div className="auth-mobile-logo">
             <Brand />
           </div>
-          {children}
+          <CaptchaNoticeGroup>{children}</CaptchaNoticeGroup>
           <footer className="auth-form-footer">
             <Link href="/">Back to UnsaidBox</Link>
             <span aria-hidden="true">·</span>

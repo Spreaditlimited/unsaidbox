@@ -1,0 +1,73 @@
+{
+  "verifiedAt": "2026-10-09T12:08:12.699Z",
+  "previousPostsPreserved": 15,
+  "newlyPublished": 5,
+  "posts": [
+    {
+      "slug": "anonymous-coaching-feedback-form",
+      "url": "https://unsaidbox.com/blog/anonymous-coaching-feedback-form",
+      "words": 1868,
+      "id": "blgafeebd61aba0a93b1e39348dbb",
+      "revision": 1,
+      "published": true,
+      "publishAt": "2026-10-09T12:08:09.994Z",
+      "updatedAt": "2026-10-09T12:08:10.097Z",
+      "contentHash": "0ef4eb198f052b92f435ef6e483475084f5b647595828deab2f6e22c52ebac51",
+      "imageVersion": "73371d0045c47c26a0da2150b3819168",
+      "cloudinaryPublicId": "unsaidbox/blog/blgafeebd61aba0a93b1e39348dbb/73371d0045c47c26a0da2150b3819168"
+    },
+    {
+      "slug": "webinar-feedback-questions-for-course-creators",
+      "url": "https://unsaidbox.com/blog/webinar-feedback-questions-for-course-creators",
+      "words": 1755,
+      "id": "blga462cdc5fd10b80b950dce46e4",
+      "revision": 1,
+      "published": true,
+      "publishAt": "2026-10-09T12:08:09.994Z",
+      "updatedAt": "2026-10-09T12:08:10.816Z",
+      "contentHash": "8ace823fcc23161c32804d96dddcff4be1f33b24ded7c2b02516adc3131a297d",
+      "imageVersion": "40cafadfc73cd027c2909a69b837988d",
+      "cloudinaryPublicId": "unsaidbox/blog/blga462cdc5fd10b80b950dce46e4/40cafadfc73cd027c2909a69b837988d"
+    },
+    {
+      "slug": "newsletter-survey-questions-for-creators",
+      "url": "https://unsaidbox.com/blog/newsletter-survey-questions-for-creators",
+      "words": 1757,
+      "id": "blgc99f54dc9f15089d5cfc133a73",
+      "revision": 1,
+      "published": true,
+      "publishAt": "2026-10-09T12:08:09.994Z",
+      "updatedAt": "2026-10-09T12:08:11.316Z",
+      "contentHash": "ffbd80dc668a67f45836a73c311a3b59e075dc5670d9d901765c3bc1448275b6",
+      "imageVersion": "1dacc6e8160440dad3e68d799ccb1205",
+      "cloudinaryPublicId": "unsaidbox/blog/blgc99f54dc9f15089d5cfc133a73/1dacc6e8160440dad3e68d799ccb1205"
+    },
+    {
+      "slug": "paid-community-feedback-survey",
+      "url": "https://unsaidbox.com/blog/paid-community-feedback-survey",
+      "words": 1764,
+      "id": "blgff37544a51d1065439d53a66df",
+      "revision": 1,
+      "published": true,
+      "publishAt": "2026-10-09T12:08:09.994Z",
+      "updatedAt": "2026-10-09T12:08:11.654Z",
+      "contentHash": "58ce2b622e59bb9e5874bfc326ce73f9f606052af686492c234baa8d2499377d",
+      "imageVersion": "5b314967d632703ad2e057e590c65de8",
+      "cloudinaryPublicId": "unsaidbox/blog/blgff37544a51d1065439d53a66df/5b314967d632703ad2e057e590c65de8"
+    },
+    {
+      "slug": "mid-course-feedback-questions-online-cohorts",
+      "url": "https://unsaidbox.com/blog/mid-course-feedback-questions-online-cohorts",
+      "words": 1821,
+      "id": "blg5da629aeebe3168ff79e34a80f",
+      "revision": 1,
+      "published": true,
+      "publishAt": "2026-10-09T12:08:09.994Z",
+      "updatedAt": "2026-10-09T12:08:11.939Z",
+      "contentHash": "bbee86baf457a0ef83d43bbfb1dbaa1672919624543c5c66e7cd625866f58c97",
+      "imageVersion": "c661a6091b95eaf693458bc45c1aaade",
+      "cloudinaryPublicId": "unsaidbox/blog/blg5da629aeebe3168ff79e34a80f/c661a6091b95eaf693458bc45c1aaade"
+    }
+  ],
+  "privacy": "No original responses, identities or private follow-up content published; examples are invented and labelled."
+}

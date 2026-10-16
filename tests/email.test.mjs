@@ -88,6 +88,7 @@ test("every email has UnsaidBox branding, escaped names and plain text without a
     "PASSWORD_CHANGED",
     "NEW_MESSAGE",
     "NEW_ANSWER",
+    "USAGE_WARNING",
     "REPORT",
     "SUSPENDED",
     "RESTORED",
@@ -295,6 +296,15 @@ test("worker cancels opted-out notifications and superseded token emails", async
     assert.equal(job.status, "CANCELLED");
     assert.equal(job.payload, null);
   }
+});
+
+test('ambiguous Brevo mail is never retried as another message', async () => {
+  Object.assign(process.env,env);
+  const {client,job}=store();let attempts=0;
+  const deliver=async()=>{attempts++;throw new Error('BREVO_UNCERTAIN');};
+  await processEmailQueue(client,{deliver});
+  assert.equal(job.status,'UNCERTAIN');assert.equal(job.payload,null);
+  await processEmailQueue(client,{deliver});assert.equal(attempts,1);
 });
 
 test("GET auth screens never consume tokens; POST actions use expiry, single-use and session revocation", async () => {

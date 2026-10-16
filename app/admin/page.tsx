@@ -4,10 +4,15 @@ import { db } from "@/lib/db";
 import { adminUserSelect, discoveryQueueWhere } from "@/lib/admin-data";
 import { AdminShell } from "@/components/AdminShell";
 import { AdminHeading, StatCard, UserTable, adminDate } from "@/components/AdminUI";
+import { planMode } from '@/lib/plan-policy.mjs';
+import { accountPlanWhere } from '@/lib/admin-entitlements.mjs';
 
 export default async function Admin() {
   const administrator = await requireAdministrator();
   const since = new Date(Date.now() - 7 * 86400000);
+  const mode = planMode();
+  const pro = mode ? await db().account.count({ where: accountPlanWhere(mode, 'pro') }) : null;
+  const formResponses = await db().feedbackEntry.count();
   const [total, active, pending, suspended, recent, unverified, questions, responses, reports, discovery, latest, events, emailRetries] = await Promise.all([
     db().account.count(), db().account.count({ where: { status: "ACTIVE" } }),
     db().account.count({ where: { status: "PENDING" } }), db().account.count({ where: { status: "SUSPENDED" } }),
@@ -26,6 +31,7 @@ export default async function Admin() {
       <StatCard label="Awaiting activation" value={pending} detail={`${unverified} unverified emails across all accounts`} href="/admin/users?status=PENDING" />
       <StatCard label="Suspended accounts" value={suspended} detail="Access restricted by moderation" href="/admin/users?status=SUSPENDED" />
     </div>
+    {pro !== null && <div className="admin-stats"><StatCard label="Free accounts" value={total-pro} detail={`Current ${mode} entitlement, including pending and suspended accounts`} href="/admin/users?plan=free" /><StatCard label="Pro accounts" value={pro} detail="Recognised subscription with an unexpired paid period" href="/admin/users?plan=pro" /><StatCard label="Form submissions retained" value={formResponses} detail="Completed forms, not individual answer rows" href="/admin/forms" /></div>}
     <div className="admin-two-column">
       <section className="panel"><div className="admin-section-title"><h2>Needs attention</h2><span>Live queues</span></div>
         <Link className="admin-queue" href="/admin/moderation"><span><strong>Open reports</strong><small>Review reports about public content</small></span><b>{reports}</b></Link>
@@ -33,7 +39,7 @@ export default async function Admin() {
         <Link className="admin-queue" href="/admin/users?verified=no"><span><strong>Unverified email addresses</strong><small>Check onboarding progress in the user directory</small></span><b>{unverified}</b></Link>
       </section>
       <section className="panel"><div className="admin-section-title"><h2>Platform activity</h2><span>All time</span></div>
-        <div className="admin-mini-stats"><div><strong>{questions.toLocaleString("en-GB")}</strong><span>Questions created</span></div><div><strong>{responses.toLocaleString("en-GB")}</strong><span>Responses collected</span></div></div>
+        <div className="admin-mini-stats"><div><strong>{questions.toLocaleString("en-GB")}</strong><span>Questions created</span></div><div><strong>{(responses+formResponses).toLocaleString("en-GB")}</strong><span>Retained messages, answers and form submissions</span></div></div>
         <p className="admin-note">Totals only. Private questions, anonymous responses and sender identities are not exposed here.</p>
         <p className="admin-note">{emailRetries} queued emails have had a failed attempt. This is a queue count, not a delivery guarantee.</p>
       </section>

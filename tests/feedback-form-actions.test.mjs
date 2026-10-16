@@ -4,7 +4,8 @@ import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 import ts from "typescript";
 import * as policy from "../lib/form-policy.mjs";
-import { InputError } from "../lib/security.mjs";
+import { InputError, digest } from "../lib/security.mjs";
+import * as followupPolicy from '../lib/followup-policy.mjs';
 const questions = [
   {
     id: "q1",
@@ -64,6 +65,7 @@ async function fixture({
       },
     },
     entries: {},
+    conversations: {},
   };
   const matches = (row, where) =>
     row &&
@@ -80,6 +82,7 @@ async function fixture({
             : v;
   }
   const client = {
+    followupConversation: { findUnique: async ({ where }) => state.conversations[where.entryId] ?? null },
     feedbackForm: {
       findFirst: async ({ where }) =>
         Object.values(state.forms).find((r) => matches(r, where)) ?? null,
@@ -120,7 +123,9 @@ async function fixture({
             e.requestKey === where.formId_requestKey.requestKey,
         ) ?? null,
       create: async ({ data }) => {
-        state.entries[Object.keys(state.entries).length] = { ...data };
+        const id = `entry${Object.keys(state.entries).length}`;
+        state.entries[Object.keys(state.entries).length] = { id, ...data };
+        if (data.followup) state.conversations[id] = data.followup.create;
       },
     },
   };
@@ -134,6 +139,11 @@ async function fixture({
     }
   };
   const modules = {
+    '@/lib/account-activity': {recordMilestone:()=>{}},
+    '@/lib/followups': { followupsReady: async () => true },
+    '@/lib/followup-policy.mjs': followupPolicy,
+    "@/lib/email": { scheduleEmails() {} },
+    "@/lib/plans": { lockPlanOwner: async () => {}, assertActiveSlot: async () => {}, consumeSubmission: async () => {} },
     "next/cache": { revalidatePath() {} },
     "next/navigation": {
       redirect(p) {
@@ -161,7 +171,7 @@ async function fixture({
         if (!captcha) throw new InputError("CAPTCHA rejected");
       },
     },
-    "@/lib/security.mjs": { InputError },
+    "@/lib/security.mjs": { InputError, digest },
     "@/lib/form-policy.mjs": policy,
     "@/lib/form-templates": {
       getFormTemplate: () => ({ templateId: "blank" }),
@@ -200,6 +210,21 @@ async function fixture({
     remove: (f) => exports.deleteFeedbackForm("f1", {}, f),
   };
 }
+test('form follow-ups require explicit opt-in and retry only returns the matching secret', async () => {
+  const f = await fixture({ active: true, locked: true });
+  const value = 'a'.repeat(64);
+  const data = form({ allowFollowup: 'on', followupToken: value });
+  const sent = await f.submit(data);
+  assert.equal(sent.followupLink, `/follow-up#${value}`);
+  assert.equal(f.state.conversations.entry0.tokenHash, digest(value));
+  assert.equal(f.state.conversations.entry0.accountId, 'owner1');
+  assert.equal((await f.submit(data)).followupLink, sent.followupLink);
+  assert.equal((await f.submit(form({ allowFollowup: 'on', followupToken: 'b'.repeat(64) }))).followupLink, undefined);
+  assert.equal(Object.keys(f.state.entries).length, 1);
+  const noOptIn = await fixture({ active: true, locked: true });
+  await noOptIn.submit(form({ followupToken: value }));
+  assert.equal(Object.keys(noOptIn.state.conversations).length, 0);
+});
 test("form mutations require account authentication and CAPTCHA before data access", async () => {
   const f = await fixture({ authorized: false });
   await assert.rejects(f.save(), /redirect:\/login/);
@@ -277,6 +302,16 @@ test("retry keys deduplicate entries and counts, and sharing requires both permi
   const privateForm = await fixture({ active: true, locked: true });
   await privateForm.submit(form({ shareAllowed: "on" }));
   assert.equal(privateForm.state.entries[0].shareAllowed, false);
+});
+test('private submissions need no analysis opt-in and do not gain public sharing permission',async()=>{
+  const f=await fixture({active:true,locked:true});
+  await f.submit();
+  await f.submit(form({analysisAllowed:'on',analysisNoticeVersion:'obsolete-notice'}));
+  assert.equal(f.state.entries[0].exportPermission,undefined);
+  const opted=await fixture({active:true,locked:true});
+  await opted.submit(form({analysisAllowed:'on',analysisNoticeVersion:'obsolete-notice'}));
+  assert.equal(opted.state.entries[0].exportPermission,undefined);
+  assert.equal(opted.state.entries[0].shareAllowed,false);
 });
 test("pause preserves link, disabling removes access, deletion requires disabled link", async () => {
   const f = await fixture({ active: true, locked: true });

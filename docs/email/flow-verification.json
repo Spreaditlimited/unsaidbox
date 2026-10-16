@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-14T10:49:12.909Z",
+  "browserSignupRecorded": true,
+  "confirmationReceived": true,
+  "getDoesNotConfirm": true,
+  "confirmationSynced": true,
+  "replayRejected": true,
+  "withdrawalSynced": true,
+  "testAddressUnsubscribed": true,
+  "firstCampaignDraftId": "cmv7zma4u0004c9aihni97gus",
+  "marketingTestAccepted": true,
+  "marketingTestReceipt": "<202610141049.46175391281@smtp-relay.mailin.fr>",
+  "productionCaptchaPassed": true,
+  "productionConfirmationReceived": true,
+  "marketingTestReceived": true,
+  "productionTestTokenInvalidated": true
+}

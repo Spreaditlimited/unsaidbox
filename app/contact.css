@@ -1,15 +1,20 @@
 .contact-hero {
+  text-align: center;
   padding: 64px 0 56px;
   background: var(--lavender);
   border-bottom: 1px solid var(--line);
 }
+.contact-hero .eyebrow {
+  justify-content: center;
+}
 .contact-hero h1 {
   max-width: 800px;
   font-size: clamp(40px, 5vw, 66px);
-  margin: 20px 0;
+  margin: 20px auto;
 }
 .contact-hero p:last-child {
   max-width: 600px;
+  margin-inline: auto;
   color: var(--muted);
   line-height: 1.8;
 }

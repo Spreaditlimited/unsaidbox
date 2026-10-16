@@ -1,0 +1,2 @@
+ALTER TABLE `BillingSubscription` ADD COLUMN `allowanceAnchor` DATETIME(3) NULL;
+ALTER TABLE `PlanUsage` MODIFY COLUMN `month` VARCHAR(96) NOT NULL;

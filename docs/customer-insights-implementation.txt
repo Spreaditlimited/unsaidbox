@@ -1,0 +1,71 @@
+Customer insights / exports / form reporting — local implementation, not deployed.
+
+Database
+Seven additive tables were manually created by the owner. Prisma schema has
+been updated; do not run migrations blindly against the existing manually
+managed migration history.
+
+Export processing
+New jobs get an immediate Next.js after() attempt. Durable database records
+survive process termination. One global lease limits export preparation to
+one worker; queries are in batches of 100 records. Three attempts maximum.
+Files use Cloudinary authenticated RAW storage in unsaidbox/exports.
+Downloads proxy through the authenticated application; signed provider URLs
+are never returned to the browser. Files expire after 24 hours.
+Private analysis includes new and existing owner responses without a separate
+sender opt-in. Sharing exports still require public-sharing permission.
+Spam messages, blocked forms and private follow-up bodies remain excluded.
+Historical ResponseExportPermission rows are retained but no longer gate
+analysis exports; no database migration or consent backfill is needed.
+Download access rechecks owner, plan, permission fingerprint, account status,
+expiry and revocation, then verifies file size and SHA-256 before returning bytes.
+
+Connected locally
+- Admin Free/Pro filtering, subscription state/interval-history filters,
+  product adoption, recorded activity, support notes and billing event timeline.
+- Mobile account-directory cards and subtle, contrast-tested stats colours.
+- Export centre: complete batched CSV preparation, long/wide form layouts,
+  selectable columns, date/timezone/source/search/review/star/tag filters,
+  saved presets, progress refresh, retry and revocation.
+- Feedback insights: daily trend, previous equal-duration period comparison,
+  ratings, median, choice distributions, skipped answers and filtered reviews.
+- Sender notices explain private analysis downloads without an opt-in checkbox.
+- Billing history is an atomic verified-state snapshot, not a cash ledger.
+- Adoption milestones record first observed actions from this release onward.
+
+Before production release:
+- Configure UNSAIDBOX_EXPORT_WORKER_SECRET as a private random secret >=32 chars.
+- Schedule POST /api/internal/export-worker with Bearer authorization using a
+  trusted scheduler every five minutes. Do not embed the token in a URL.
+- The scheduled worker is mandatory for automatic queue recovery and physical
+  deletion of expired files. Without it only immediate attempts/manual retries
+  run, although application download access still expires.
+- Never activate a production schedule before the code has been deployed.
+- Verify Cloudinary raw-file size limits for the existing account; application
+  generation is bounded to 25 MB and 180 seconds. Provider limits may be lower.
+- Set maxDuration=300 for export page/actions and worker routes (already in code).
+- No public CSV URLs, private reply exports, or retroactive consent grants.
+
+Verified so far:
+Prisma schema validation, client generation and TypeScript checks.
+Synthetic 10,001-message CSV test; one-entry-per-row form test.
+CSV formula escaping, owner scoping, privacy exclusions, valid date ranges,
+UK daylight-saving boundary and weighted rating median tests.
+Cloudinary synthetic CSV: unsigned request denied, authenticated bytes match;
+test asset deleted.
+Dedicated database read-only connectivity test passed (encrypted, 38 tables).
+Seven-table queries and aggregated chart SQL verified with a nonexistent owner;
+no customer response content read. All 293 automated tests and typecheck pass.
+Production build passed before the last small UI/milestone changes; rerun it
+before release. Worker lease, retry, owner checks and download revocation tests pass.
+User-observed /admin failure was a stale in-memory Prisma client after generation.
+Regenerated and restarted only UnsaidBox on localhost:3001; /admin returned 200.
+Signed-in export completion and mobile visual review still need browser checks.
+
+Remaining before calling the approved end-to-end direction complete:
+- Summary/ZIP export formats, saved admin views and cross-form cohort mapping
+  are not implemented; do not advertise them as complete.
+- Browser/mobile end-to-end verification with authenticated accounts.
+- Five creator guides' CSV guidance corrected locally; publishing corrected
+  database content requires an explicit release decision.
+- Scheduled worker configuration at deployment time.

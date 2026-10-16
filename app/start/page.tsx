@@ -4,6 +4,7 @@ import { AuthShell } from "@/components/AuthShell";
 import { AuthField } from "@/components/AuthField";
 import { ActionForm } from "@/components/ActionForm";
 import { register } from "@/app/actions";
+import { SocialSignIn } from '@/components/SocialSignIn';
 export const metadata = { title: "Create your box" };
 export default function Start() {
   return (
@@ -13,6 +14,7 @@ export default function Start() {
         <h1>Create your box</h1>
         <p>One account. A private inbox. Your own link to share.</p>
       </header>
+      <SocialSignIn />
       <ActionForm
         action={register}
         label="Create account"

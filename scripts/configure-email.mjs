@@ -43,11 +43,11 @@ try {
   const origin =
     (
       await rl.question(
-        `App URL [${existing.UNSAIDBOX_APP_URL || "http://127.0.0.1:3001"}]: `,
+        `App URL [${existing.UNSAIDBOX_APP_URL || "http://localhost:3001"}]: `,
       )
     ).trim() ||
     existing.UNSAIDBOX_APP_URL ||
-    "http://127.0.0.1:3001";
+    "http://localhost:3001";
   console.log(
     "Use your Mac’s LAN URL if you will open email links on your phone. Use https://unsaidbox.com only when it is deployed.",
   );

@@ -1,4 +1,19 @@
-/* Shared authenticated workspace and picker contract. Light is intentional. */
+/* Shared authenticated workspace and picker contract. Light is the default; colours come from the shared theme palette. */
+.workspace-body,
+.workspace-main,
+.workspace-main > *,
+.workspace .panel,
+.workspace .app-form > fieldset { min-width: 0; }
+.workspace-main > h1 + :is(.panel, section) { margin-top: 24px; }
+.workspace .panel > details { margin-top: 24px; }
+.workspace details > summary { min-height: 44px; padding-block: 10px; line-height: 1.6; cursor: pointer; }
+.workspace details > summary + .app-form { margin-top: 18px; }
+.workspace .app-form > fieldset > .fine + :is(label, .picker-field, .admin-two-column),
+.workspace .app-form > fieldset > .admin-two-column + :is(.fine, .notice) { margin-top: 20px; }
+.workspace .app-form .check { flex-wrap: nowrap; }
+.workspace .app-form .check-label { min-width: 0; overflow-wrap: anywhere; }
+.workspace .panel > :is(p, .app-form) + article { margin-top: 24px; }
+.workspace :is(.workspace-heading, .workspace-topbar, .workspace-account) { min-width: 0; }
 .account-avatar img {
   width: 100%;
   height: 100%;
@@ -66,6 +81,8 @@
   letter-spacing: 0.12em;
   color: var(--muted);
 }
+.workspace-upgrade { min-height: 44px; white-space: nowrap; }
+@media (max-width: 480px) { .workspace-topbar .workspace-breadcrumb { display: none; } .workspace-topbar .workspace-account { width: 100%; } .workspace-upgrade { margin-right: auto; } }
 .workspace-nav {
   display: grid;
   gap: 6px;
@@ -146,7 +163,7 @@
   font-weight: 500;
 }
 .workspace-breadcrumb > span {
-  color: #c7c3d4;
+  color: var(--color-text-muted);
 }
 .workspace-account {
   display: flex;
@@ -234,7 +251,7 @@
 }
 .workspace .panel {
   border-radius: var(--workspace-radius);
-  box-shadow: 0 2px 4px #20233203;
+  box-shadow: 0 2px 4px var(--color-shadow-soft);
 }
 .workspace h2 {
   font-size: 18px;
@@ -277,6 +294,46 @@
 .workspace .action-row {
   align-items: center;
 }
+/* Shared dashboard rhythm; specialised grid/card layouts keep their own gaps. */
+.workspace-main > :is(a.fine, a.text-link) {
+  display: inline-block;
+  margin-bottom: 20px;
+}
+.workspace-main > p + :is(section, form, .response-list, .button),
+.workspace-main > h1 + form {
+  margin-top: 24px;
+}
+.workspace .panel > :is(h2, h3):first-child { margin-top: 0; }
+.workspace .panel > .badge + h2 { margin-top: 16px; }
+.workspace .panel > p + p { margin-top: 12px; }
+.workspace .panel > :is(p, h2, h3) + .button,
+.workspace .panel > h2 + .app-form,
+.workspace .panel > .copy-link + .app-form,
+.workspace .panel > .app-form + .action-row {
+  margin-top: 24px;
+}
+.workspace .dashboard-section > .panel + .panel { margin-top: 20px; }
+.workspace .panel > .app-form > fieldset > :is(label, .auth-field, .picker-field) {
+  margin-block: 0 20px;
+}
+.workspace .panel > .app-form > fieldset > :is(label, .auth-field, .picker-field):last-child {
+  margin-bottom: 0;
+}
+.workspace .app-form label > .fine {
+  display: block;
+  margin-top: 8px;
+  line-height: 1.65;
+  font-weight: 400;
+}
+.workspace .response-actions { gap: 12px; }
+.workspace .panel .button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .workspace .editor-panel > .action-row,
+  .workspace .response-list .response-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .workspace .editor-panel > .action-row > .button,
+  .workspace .response-list .response-actions > .button { width: 100%; }
+  .workspace .editor-panel > .app-form > .button { width: 100%; justify-self: stretch; }
+}
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -290,11 +347,11 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 4px #20233203;
+  box-shadow: 0 2px 4px var(--color-shadow-soft);
   transition: border-color 0.15s;
 }
 .metric-card:hover {
-  border-color: #b4abd9;
+  border-color: var(--color-purple-border);
 }
 .metric-label {
   display: flex;
@@ -328,7 +385,7 @@
   gap: 26px;
   align-items: center;
   background: var(--lavender);
-  border: 1px solid #dfd9f3;
+  border: 1px solid var(--color-border);
   border-radius: var(--workspace-radius);
   padding: 25px;
   margin-bottom: 28px;
@@ -388,7 +445,7 @@
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: var(--workspace-radius);
-  box-shadow: 0 2px 4px #20233203;
+  box-shadow: 0 2px 4px var(--color-shadow-soft);
 }
 .workspace-section-heading {
   display: flex;
@@ -477,14 +534,14 @@
   text-transform: capitalize;
 }
 .status-pill.pending {
-  color: #896119;
-  background: #fff8eb;
-  border-color: #eee0c4;
+  color: var(--color-warning-text);
+  background: var(--color-warning-bg);
+  border-color: var(--color-border);
 }
 .status-pill.active {
-  color: #31705f;
-  background: #f0f8f4;
-  border-color: #d4e9df;
+  color: var(--color-success-text);
+  background: var(--color-success-bg);
+  border-color: var(--color-border);
 }
 .workspace .message-text {
   font-size: 14px;
@@ -548,7 +605,7 @@
 .inbox-filters {
   padding: 20px 24px;
   border-bottom: 1px solid var(--line);
-  background: #fcfcfe;
+  background: var(--color-surface);
 }
 .inbox-filters .picker-field {
   width: 260px;
@@ -593,7 +650,7 @@
   gap: 18px;
   padding: 11px 13px;
   background: var(--white);
-  border: 1px solid #d5d1df;
+  border: 1px solid var(--color-border);
   border-radius: 9px;
   color: var(--ink);
   font: inherit;
@@ -601,14 +658,14 @@
   line-height: 22px;
   text-align: left;
   cursor: pointer;
-  box-shadow: 0 1px 2px #20233206;
+  box-shadow: 0 1px 2px var(--color-shadow-soft);
 }
 .picker-trigger:hover:not(:disabled) {
-  border-color: #a49bc5;
+  border-color: var(--color-purple-border);
 }
 .picker-trigger[data-state="open"] {
   border-color: var(--indigo);
-  box-shadow: 0 0 0 3px #5850b814;
+  box-shadow: 0 0 0 3px var(--color-shadow);
 }
 .picker-trigger:disabled,
 fieldset:disabled .picker-trigger {
@@ -630,8 +687,8 @@ fieldset:disabled .picker-trigger {
   border: 1px solid var(--line);
   border-radius: 11px;
   box-shadow:
-    0 14px 38px #2023321c,
-    0 3px 8px #20233208;
+    0 14px 38px var(--color-shadow),
+    0 3px 8px var(--color-shadow-soft);
 }
 .picker-viewport {
   padding: 5px;
@@ -652,7 +709,7 @@ fieldset:disabled .picker-trigger {
 }
 .picker-option[data-state="checked"] {
   color: var(--indigo);
-  background: #f6f4fd;
+  background: var(--color-purple-bg);
 }
 .picker-option[data-highlighted] {
   background: var(--lavender);
@@ -824,3 +881,47 @@ fieldset:disabled .picker-trigger {
     font-size: 29px;
   }
 }
+
+/* Keep controls comfortable on phones without changing desktop compositions. */
+@media (max-width: 600px) {
+  .workspace-main { padding-inline: 16px; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+  .workspace-main > .panel,
+  .workspace-main > .dashboard-section > .panel,
+  .workspace .response-list > .panel { padding: 20px; }
+  .workspace-topbar { flex-wrap: wrap; gap: 12px; padding-inline: 16px; }
+  .workspace-sidebar { padding-inline: 16px; }
+  .workspace .dashboard-section { margin-block: 28px; }
+  .workspace .button.small, .workspace-signout, .workspace-nav a { min-height: 44px; }
+  .workspace .workspace-signout { min-width: 44px; }
+  .workspace .action-row { gap: 12px; }
+  .workspace .action-row > .button { flex: 1 1 180px; min-width: 0; text-align: center; }
+  .workspace .app-form > .button { width: 100%; justify-self: stretch; }
+  .workspace .app-form :is(input:not([type='checkbox']):not([type='hidden']), textarea),
+  .workspace .picker-trigger { font-size: 16px; }
+  .workspace .panel > p { overflow-wrap: anywhere; }
+  .workspace .profile-photo-controls { gap: 18px; }
+  .workspace .profile-photo-controls > div { flex-basis: 100%; }
+}
+
+/* Optional Sunday digest invitation, separate from workspace tasks. */
+.workspace .marketing-invitation { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); margin: 0 0 32px; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); }
+.marketing-invitation-copy { padding: 32px; background: var(--lavender); }
+.marketing-invitation-kicker { display: block; margin-bottom: 18px; font-size: 10px; font-weight: 700; line-height: 1.5; letter-spacing: 1.5px; color: var(--indigo); }
+.workspace .marketing-invitation h2 { margin: 0 0 16px; font-size: clamp(25px, 2.5vw, 32px); line-height: 1.18; letter-spacing: -.8px; }
+.workspace .marketing-invitation-copy > p { margin: 0; max-width: 340px; font-size: 14px; line-height: 1.75; color: var(--muted); }
+.marketing-invitation-schedule { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; padding: 7px 11px; border: 1px solid color-mix(in srgb, var(--indigo) 18%, transparent); border-radius: 30px; color: var(--indigo); font-size: 11px; line-height: 1.5; font-weight: 600; }
+.marketing-invitation-choice { padding: 30px 32px 24px; min-width: 0; }
+.workspace .marketing-invitation h3 { margin: 0 0 8px; font-size: 16px; line-height: 1.4; }
+.workspace .marketing-invitation-choice > p { margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.workspace .marketing-invitation .app-form { margin: 0; }
+.workspace .marketing-invitation .app-form fieldset { padding: 0; margin: 0; min-width: 0; }
+.workspace .marketing-invitation .check { margin: 0; gap: 11px; flex-wrap: nowrap; padding: 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 12px; line-height: 1.65; color: var(--ink); }
+.workspace .marketing-invitation .check:focus-within { outline: 2px solid var(--indigo); outline-offset: 3px; }
+.workspace .marketing-invitation .check input[type="checkbox"] { margin-top: 2px; }
+.workspace .marketing-invitation .app-form .fine { margin: 10px 0 0; font-size: 11px; line-height: 1.65; color: var(--muted); }
+.workspace .marketing-invitation .app-form > .button { width: 100%; margin: 16px 0 0; min-height: 44px; font-size: 12px; justify-content: center; }
+.workspace .marketing-invitation .captcha-notice { margin-top: 10px; font-size: 10px; }
+.workspace .marketing-invitation-choice > .marketing-invitation-footer { margin: 14px 0 0; font-size: 10px; line-height: 1.7; }
+.marketing-invitation-footer a { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 900px) { .workspace .marketing-invitation { grid-template-columns: 1fr; } .marketing-invitation-copy { padding: 26px; } .marketing-invitation-choice { padding: 26px; } .workspace .marketing-invitation-copy > p { max-width: none; } .marketing-invitation-schedule { margin-top: 18px; } }
+@media (max-width: 480px) { .marketing-invitation-copy, .marketing-invitation-choice { padding: 22px; } .workspace .marketing-invitation h2 { font-size: 27px; } }

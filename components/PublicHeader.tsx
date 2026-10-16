@@ -1,4 +1,5 @@
 "use client";
+import {ThemePicker} from "./ThemePicker";
 
 import Link from "next/link";
 import { useRef, useState } from "react";
@@ -21,10 +22,11 @@ export function PublicHeader() {
         <Link href="/#how-it-works">How it works</Link>
         <Link href="/explore">Explore</Link>
         <Link href="/templates">Templates</Link>
+        <Link href="/pricing">Pricing</Link>
         <Link href="/blog">Blog</Link>
         <Link href="/dashboard">My box</Link>
       </nav>
-      <div className="public-header-actions">
+      <div className="public-header-actions"><ThemePicker/>
         <Link className="button small" href="/start">Your own box <Arrow /></Link>
         <button ref={trigger} type="button" className="public-menu-toggle" aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="public-navigation" onClick={() => setOpen(value => !value)}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">

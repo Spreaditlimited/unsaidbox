@@ -1,8 +1,11 @@
+import {ThemePicker} from "@/components/ThemePicker";
 import { Checkbox } from "@/components/ui/Checkbox";
 import Link from "next/link";
 import { ActionForm } from "./ActionForm";
 import { submitMessage } from "@/app/actions";
-export function SenderForm({
+import { followupsReady } from '@/lib/followups';
+import { FollowupOptIn } from './FollowupOptIn';
+export async function SenderForm({
   username,
   name,
   questionId = null,
@@ -19,7 +22,7 @@ export function SenderForm({
 }) {
   return (
     <main id="main" className="sender-shell">
-      <section className="sender-card">
+      <section className="sender-card"><div className="standalone-appearance"><ThemePicker/></div>
         <p className="eyebrow">TO {name}</p>
         <h1 className="message-text">{prompt}</h1>
         {open ? (
@@ -48,12 +51,14 @@ export function SenderForm({
             </div>
             <p className="privacy-note">
               {policy === "PRIVATE_ONLY"
-                ? "Private-only: this message cannot be published or exported through UnsaidBox."
+                ? "Private-only: this message cannot be published or exported for sharing through UnsaidBox. The recipient can review and download it for their own private analysis."
                 : "The owner may publish or share your words, but your name is not attached. Avoid including identifying details."}
             </p>
             <Checkbox name="consent" required>
               I am 18 or older and understand how my message may be used.
             </Checkbox>
+            <p className="fine">The recipient may download responses for private analysis. Downloaded copies cannot be recalled by UnsaidBox. Avoid including identifying or sensitive personal details.</p>
+            {await followupsReady() ? <FollowupOptIn /> : null}
             <p className="fine">
               Do not send threats, harassment or someone else’s private
               information. No account is needed.

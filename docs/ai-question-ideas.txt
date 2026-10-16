@@ -1,0 +1,32 @@
+AI QUESTION IDEAS — PRO
+
+Entry: /dashboard/questions/new (Ask your audience).
+Inputs: niche, optional audience, goal and tone. Generates five distinct editable
+suggestions. Choosing one fills the draft only. The owner must explicitly create
+the answer link using the existing form, privacy policy and active-link quota.
+No question is automatically persisted or published by generation.
+
+Access uses the same server-verified Pro entitlement as branding/exports.
+Currently those entitlements operate in local sandbox only; deployment and the
+live billing release remain separate prerequisites. Never grant production Pro
+access from a sandbox payment. Free users retain the manual question editor.
+
+Provider: existing UNSAIDBOX_OPENAI_API_KEY, loaded by Next.js from the normal
+environment hierarchy; no secrets were copied or modified. AI SDK structured
+output with the OpenAI Responses provider, gpt-5.4-mini. store:false, no tools,
+no automatic retries, a 25-second deadline and 1,800 output-token ceiling.
+Only the explicit generator fields are sent. No messages, answers, account IDs,
+emails or profile data. Do not log provider payloads or errors containing inputs.
+
+Limits: existing durable RateLimit table reserves requests before calling the
+provider. Per owner: 2/minute, 10/hour, 50/UTC day; global 1,000/UTC day safety cap.
+Failed provider attempts count; no extra tables or migration needed. The global
+safety cap can temporarily pause generation for everyone. These are request caps,
+not a guarantee of a specific monetary cost. Monitor OpenAI billing separately.
+
+Verification: tests cover Pro denial, authentication, CAPTCHA, input allowlists,
+quota calls, output validation, safe failure messages and manual-editor fallback.
+A real call using a generic AI-for-small-business niche returned five validated
+questions. No customer content was used and no database question was created.
+Remaining manual check: sign in as sandbox Pro, generate, select, edit, create
+the answer link and submit an answer using the existing flow. No deployment made.

@@ -21,6 +21,7 @@ export default function Cookies() {
           local-storage entry remembers your choice for up to 180 days. These
           are not advertising tools.
         </p>
+        <p>The <code>unsaidbox_followup</code> cookie is essential for accessing a private follow-up conversation. It is HTTP-only and scoped to that conversation’s path, expires with the return link after up to 90 days, and does not identify the sender to the recipient. Removing it requires reopening your saved private return link.</p>
         <h2>Google reCAPTCHA</h2>
         <p>
           On the live site, invisible reCAPTCHA v3 checks submitted forms to
@@ -50,6 +51,7 @@ export default function Cookies() {
           disabled in our tag configuration.
         </p>
         <h2>Changing your choice</h2>
+        <p>If you dismiss the email-update invitation, local storage remembers that choice for 30 days. After a successful signup request or email confirmation, it hides the invitation for 365 days. This preference contains no email address or subscription token and does not enable Analytics.</p>
         <p>
           Accept and reject options are available in the initial banner. Cookie
           settings lets you withdraw later. Withdrawal clears Analytics cookies

@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "./db";
 import { digest, token, InputError } from "./security.mjs";
+import { recordAccountActivity } from './account-activity';
 const cookieName = "unsaidbox_session";
 export async function currentAccount() {
   const value = (await cookies()).get(cookieName)?.value;
@@ -56,6 +57,7 @@ export async function beginSession(accountId: string) {
     path: "/",
     expires: expiresAt,
   });
+  recordAccountActivity(accountId, 'login');
 }
 export async function endSession() {
   const jar = await cookies();

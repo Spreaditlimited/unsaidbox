@@ -5,18 +5,21 @@ import { Checkbox } from "@/components/ui/Checkbox";
 import { QuestionFields } from "./QuestionFields";
 import { submitFeedbackForm } from "@/app/dashboard/forms/actions";
 import type { FormQuestion } from "@/lib/form-templates";
+import { FollowupOptIn } from '@/components/FollowupOptIn';
 export function RespondForm({
   id,
   revision,
   questions,
   allowSharing,
   requestKey,
+  followupToken,
 }: {
   id: string;
   revision: number;
   questions: FormQuestion[];
   allowSharing: boolean;
   requestKey: string;
+  followupToken?: string;
 }) {
   const [share, setShare] = useState(false);
   return (
@@ -29,6 +32,7 @@ export function RespondForm({
     >
       <input type="hidden" name="revision" value={revision} />
       <input type="hidden" name="requestKey" value={requestKey} />
+      {followupToken ? <input type="hidden" name="followupToken" value={followupToken} /> : null}
       <div className="feedback-honeypot" aria-hidden="true">
         <label>
           Leave this empty
@@ -67,6 +71,8 @@ export function RespondForm({
           </p>
         )}
       </div>
+      <p className="fine">The recipient can review and download your answers for private analysis. This does not permit public sharing. Downloaded copies cannot be recalled by UnsaidBox. Avoid including identifying or sensitive personal details.</p>
+      {followupToken ? <FollowupOptIn /> : null}
     </ActionForm>
   );
 }

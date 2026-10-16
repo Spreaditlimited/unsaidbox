@@ -5,6 +5,8 @@ import { db } from "@/lib/db";
 import { canShareFormAnswer } from "@/lib/form-policy.mjs";
 import { DashboardShell } from "@/components/DashboardShell";
 import { ShareStudio } from "@/components/ShareStudio";
+import { shareBrand } from "@/lib/branding";
+import styles from '@/components/ShareStudio.module.css';
 export default async function ShareFormAnswerPage({
   params,
 }: {
@@ -35,16 +37,20 @@ export default async function ShareFormAnswerPage({
   if (!answer?.textValue || !canShareFormAnswer(answer.entry)) notFound();
   return (
     <DashboardShell accountId={a.id} name={a.displayName} section="forms">
-      <Link href={`/dashboard/forms/${id}`} className="fine">
+      <header className={styles.pageHeader}>
+      <Link href={`/dashboard/forms/${id}`}>
         ← Back to responses
       </Link>
-      <h1>Give these words a little space.</h1>
-      <p className="notice">
+      <p className="eyebrow">SHARE STUDIO</p>
+      <h1>Words worth sharing.</h1>
+      <p>Refine the words, make the card yours, then share it with your audience.</p>
+      </header>
+      <p className={styles.privacyNote}>
         The sender permitted sharing. Review and remove identifying details
         before exporting. Nothing is automatically published; externally shared
         copies cannot be recalled.
       </p>
-      <ShareStudio initialBody={answer.textValue} question={answer.label} />
+      <ShareStudio initialBody={answer.textValue} question={answer.label} brand={await shareBrand(a.id)} />
     </DashboardShell>
   );
 }

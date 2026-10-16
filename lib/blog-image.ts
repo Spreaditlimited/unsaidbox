@@ -4,6 +4,7 @@ import { randomBytes } from "node:crypto";
 import { db } from "./db";
 import { InputError } from "./security.mjs";
 import { blogImagePrompt } from "./blog-policy.mjs";
+import { uploadBlogCover } from "./blog-cloudinary.mjs";
 
 export async function prepareBlogImage(input: Buffer) {
   if (!input.length || input.length > 15 * 1024 * 1024) throw new InputError("The image is empty or too large.");
@@ -40,10 +41,11 @@ export async function updateBlogImage(id: string, adminId: string, upload?: Buff
     }
     const image = await prepareBlogImage(bytes);
     const version = randomBytes(16).toString("hex");
+    const cloudinary = await uploadBlogCover(image, id, version);
     await db().$transaction(async tx => {
       const owned = await tx.blogPost.updateMany({ where: { id, imageLock: lock }, data: { imageLock: null, imageLockedAt: null } });
       if (owned.count !== 1) throw new InputError("The article changed while the cover was being prepared. Please retry.");
-      await tx.blogImage.upsert({ where: { postId: id }, create: { postId: id, image, version }, update: { image, version } });
+      await tx.blogImage.upsert({ where: { postId: id }, create: { postId: id, image, version, ...cloudinary }, update: { image, version, ...cloudinary } });
       await tx.auditEvent.create({ data: { actorId: adminId, targetId: id, action: upload ? "blog:image-upload" : "blog:image-generate" } });
     });
     return version;

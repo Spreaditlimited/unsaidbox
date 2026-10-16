@@ -2,6 +2,14 @@
 import { createContext, useContext } from "react";
 type Config = { enabled: boolean; siteKey: string };
 const Context = createContext<Config>({ enabled: false, siteKey: "" });
+// Disclosure placement is separate from CAPTCHA execution and verification.
+const GroupedNotice = createContext(false);
+export function CaptchaNoticeGroup({ children }: { children: React.ReactNode }) {
+  return <>
+    <GroupedNotice.Provider value={true}>{children}</GroupedNotice.Provider>
+    <Captcha />
+  </>;
+}
 export function CaptchaProvider({
   config,
   children,
@@ -73,7 +81,8 @@ export function useCaptcha() {
 }
 export function Captcha() {
   const { enabled } = useContext(Context);
-  if (!enabled) return null;
+  const grouped = useContext(GroupedNotice);
+  if (!enabled || grouped) return null;
   return (
     <p className="captcha-notice fine">
       This site is protected by reCAPTCHA and the Google{" "}

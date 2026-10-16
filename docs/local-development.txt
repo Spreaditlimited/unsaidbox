@@ -1,0 +1,49 @@
+Local database recovery
+=======================
+
+Run npm run dev from the UnsaidBox directory. This now runs scripts/dev.mjs,
+which loads Next.js development environment files in their normal precedence.
+The old one-time predev check is replaced by a continuous local supervisor.
+
+For the configured localhost:13307 database only, it checks the encrypted
+database connection before starting Next.js. If no tunnel is listening, it
+starts SSH using ~/.ssh/unsaidbox_tunnel and the dedicated unsaidbox-tunnel
+account on the existing VPS, forwarding only localhost:13307 to localhost:3307.
+It never edits .env, SSH configuration, production, firewall rules or VPS files.
+
+One-time key unlock for your current SSH-agent session:
+  ssh-add ~/.ssh/unsaidbox_tunnel
+Enter the SSH key passphrase in your own terminal, never in chat or .env.
+An encrypted key cannot reconnect unattended until it is available to the
+SSH agent. You may need to unlock it again after signing out or restarting.
+The runner gives instructions and retries every 30 seconds if authentication
+fails. It never stores a passphrase or disables host/certificate verification.
+
+While development runs, a read-only database probe runs about every 15 seconds.
+Unreachable connections trigger retries with 2–30 second backoff. SSH uses
+15-second keepalives and detects failure after three unanswered checks.
+Recovery resumes after the Mac wakes and network access returns; it cannot
+operate while the computer is asleep or the network is unavailable.
+
+A working manually started tunnel is reused. The runner never kills an
+existing external tunnel. If that tunnel dies and releases the port, the runner
+can replace it. If an unhealthy external tunnel keeps the port occupied, stop
+that tunnel yourself to let recovery take ownership.
+
+Ctrl+C stops Next.js and only the SSH tunnel owned by this runner. It does not
+stop an external tunnel or Stripe listener. Keep npm run dev running for
+automatic recovery; it is not an always-on macOS background service.
+
+Logs include timestamped connection/retry states, not raw database URLs, private
+keys or provider credentials. TLS/authentication/schema failures are reported
+separately and are not treated as a reason to restart a healthy tunnel.
+Use npm run db:check for detailed safe database diagnostics.
+
+Requests during an outage may still fail; refresh the page after the connection
+ready message. No payment, form submission or other write is automatically
+replayed. This supervisor does not change production authentication or retry
+behaviour.
+
+Checks:
+  node --test tests/dev-tunnel.test.mjs
+  npm run db:check

@@ -1,5 +1,7 @@
 # UnsaidBox
 
+Marketing pages must never name competitors or link to competitor websites. Use “Other tools” when a comparison helps conversion. Focus on verified UnsaidBox benefits; do not invent missing competitor capabilities. Keep acquisition calls to action within UnsaidBox.
+
 Standalone product. Never import configuration, secrets, database clients, or authentication from the Tochukwu website.
 Use only the dedicated `unsaidbox` database and database-scoped credentials.
 Never push, deploy, change DNS, or migrate existing website data without explicit authorization.
@@ -15,3 +17,5 @@ Administration uses Administrator and AdministratorSession, never Account.role o
 Image uploads use the shared `FilePicker` (a styled button backed by a hidden file input; the device file chooser remains native for security/accessibility). Profile photos are authenticated, private dashboard assets, not automatically public. Re-encode uploads on the server, strip metadata, enforce input byte/pixel and output byte limits, and never trust MIME labels alone.
 Every owner operation must scope queries to the authenticated account. Never trust an account ID sent by a client.
 Do not claim a message was delivered, copied, or posted unless that operation actually succeeded.
+
+Production deployments must go through Git: commit and push to the connected GitHub repository and let Vercel build the production branch. Do not deploy a local workspace directly with the Vercel CLI.

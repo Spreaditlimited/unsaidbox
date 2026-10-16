@@ -70,7 +70,7 @@ test("live v3 checks score, action, hostname, expiry and missing configuration",
     { action: "sendContact" },
     { hostname: "attacker.example" },
     { success: false },
-    { challenge_ts: new Date(Date.now() - 121000).toISOString() },
+    { success: false, "error-codes": ["timeout-or-duplicate"] },
   ])
     await assert.rejects(
       verifyCaptcha(captchaForm(), "login", {

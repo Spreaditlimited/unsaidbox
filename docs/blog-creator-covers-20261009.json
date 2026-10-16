@@ -1,0 +1,37 @@
+[
+  {
+    "name": "coaching",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-7ba2b298-795d-45cc-b891-a02d7a27cc6f.png",
+    "output": "output/blog-creator-guides-20261009/coaching.webp",
+    "generation": "Built-in image_gen; editorial 16:9, warm ivory, ink navy, lavender, coral accents; no text, logos or identifiable people.",
+    "subject": "A sculptural pair of empty chairs across a small round table; between them an open ivory envelope and floating lavender conversation cards."
+  },
+  {
+    "name": "webinar",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-a31bd501-939e-4cef-97fc-fdfcc69bd409.png",
+    "output": "output/blog-creator-guides-20261009/webinar.webp",
+    "generation": "Built-in image_gen; editorial 16:9, warm ivory, ink navy, lavender, coral accents; no text, logos or identifiable people.",
+    "subject": "A sculptural laptop showing an abstract presentation; audience-response cards flowing towards an open envelope."
+  },
+  {
+    "name": "newsletter",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-6a9cd3cd-81bd-4873-a75e-d4af1e14006c.png",
+    "output": "output/blog-creator-guides-20261009/newsletter.webp",
+    "generation": "Built-in image_gen; editorial 16:9, warm ivory, ink navy, lavender, coral accents; no text, logos or identifiable people.",
+    "subject": "An open envelope holding an abstract newsletter, paper response cards in a loop, and a fountain pen."
+  },
+  {
+    "name": "community",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-a292d575-ff38-4e60-adf9-a171d145cb5d.png",
+    "output": "output/blog-creator-guides-20261009/community.webp",
+    "generation": "Built-in image_gen; editorial 16:9, warm ivory, ink navy, lavender, coral accents; no text, logos or identifiable people.",
+    "subject": "A circle of six abstract seats around a table with an open feedback envelope at the centre."
+  },
+  {
+    "name": "course",
+    "source": "/Users/tochukwunkwocha/.codex/generated_images/01a0d23b-b284-7d93-8671-46044892f682/exec-77993c97-c293-44d2-b165-db5d256cddfe.png",
+    "output": "output/blog-creator-guides-20261009/course.webp",
+    "generation": "Built-in image_gen; editorial 16:9, warm ivory, ink navy, lavender, coral accents; no text, logos or identifiable people.",
+    "subject": "A stepped path of five lesson cards, a bookmark and feedback envelope beside the middle step."
+  }
+]

@@ -1,0 +1,62 @@
+Anonymous follow-ups — implementation and launch checklist
+
+Scope: new inbox submissions, question answers and feedback form entries.
+Available on Free and Pro. Initial submissions use existing plan allowances;
+follow-up replies do not increment the monthly submission allowance.
+Each side may send 20 replies/hour, owners 200/hour across conversations,
+with 100 replies total per conversation and 3,000 characters per reply.
+
+Sender explicitly opts in. No retroactive conversations for older submissions.
+Receipt displays a secret return link /follow-up#<256-bit-token>.
+Only its SHA-256 hash is stored. The fragment is stripped before submitting
+the CAPTCHA-protected unlock action and never appears in a server URL.
+Unlock issues an HTTP-only SameSite=Strict cookie scoped to the conversation.
+Anyone holding the return link can read and act as the sender. Treat it as a
+password. No recovery and no sender email notifications; check manually.
+Return access expires 90 days after creation (not an automatic deletion).
+
+Private messages are separate from Submission.ownerReply (a PUBLIC reply).
+No publishing, share-card or CSV route includes follow-up messages.
+Owner queries derive account scope from requireAccount. Sender reads and writes
+require the conversation-specific cookie and hash match. Suspension, spam,
+blocked form, expiry, closure and reply limits are checked server-side.
+Close is permanent for both parties. Reports close the conversation and enter
+the existing administrator moderation queue. Source deletion cascades to the
+conversation and replies. No real-time or guaranteed-response claim.
+
+Migration:
+prisma/migrations/20261008100000_anonymous_followups/migration.sql
+Two additive tables, no rewriting of old data. Apply only to unsaidbox.
+If tables are absent, collection forms hide follow-up opt-in and continue
+accepting ordinary submissions; dashboard follow-ups explain setup is pending.
+The homepage markets this feature: do not deploy it before tables are ready.
+
+Before release:
+1. Install tables; regenerate client and restart local development on 3001.
+2. Anonymous visitor opts in on each collection type and saves receipt link.
+3. Owner sees conversation; replies; visitor returns and replies anonymously.
+4. Another owner and a browser without the link cannot access the thread.
+5. Refresh/retry same request key doesn't create duplicate replies.
+6. Closing/reporting/expiry/source deletion prevent further replies.
+7. Confirm private replies never appear in Explore, public profiles or exports.
+8. Obtain explicit deployment permission. No deployment is authorized by tests.
+
+Local verification — 8 October 2026
+Read-only table check confirmed both tables in the dedicated database.
+Browser tests ran against http://localhost:3001 with temporary accounts:
+- Inbox, question-answer and feedback-form opt-ins created return links.
+- Return links unlocked the correct originals; URL fragments were removed
+  and the sender cookie was HttpOnly and conversation-path scoped.
+- Owner and anonymous sender replies persisted and appeared after refresh.
+- A browser without the sender cookie could not read the conversation;
+  a different owner received 404 on the dashboard conversation route.
+- Closing removed reply controls for both participants.
+- Opting out created no conversation and no return link.
+- No test emails were queued. Temporary accounts were removed, with
+  conversation/message cascade deletion verified.
+The running development process initially returned a generic error on unlock.
+Restarting only UnsaidBox after client regeneration resolved that failure;
+the complete browser flow then passed. Local server remains on port 3001.
+These checks are local against the dedicated database, not deployed checks.
+Reporting, expiry and duplicate-request policies have automated test coverage;
+they were not separately exercised through the browser in this run.

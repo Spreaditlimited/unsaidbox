@@ -4,6 +4,9 @@ import { db } from "@/lib/db";
 import { canShareResponse } from "@/lib/publishing.mjs";
 import { ShareStudio } from "@/components/ShareStudio";
 import { DashboardShell } from "@/components/DashboardShell";
+import { shareBrand } from "@/lib/branding";
+import Link from "next/link";
+import styles from '@/components/ShareStudio.module.css';
 export default async function Share({
   params,
 }: {
@@ -21,14 +24,20 @@ export default async function Share({
       accountId={a.id}
       name={a.displayName}
     >
-      <h1>Share these words.</h1>
-      <p className="notice">
+      <header className={styles.pageHeader}>
+      <Link href="/dashboard?view=inbox">← Back to inbox</Link>
+      <p className="eyebrow">SHARE STUDIO</p>
+      <h1>Words worth sharing.</h1>
+      <p>Refine the words, make the card yours, then share it with your audience.</p>
+      </header>
+      <p className={styles.privacyNote}>
         Review identifying details before sharing. Downloads and copied text
         cannot be recalled once shared externally.
       </p>
       <ShareStudio
+        brand={await shareBrand(a.id)}
         initialBody={r.publicBody ?? r.body}
-        question={r.question?.body ?? "An anonymous inbox message"}
+        question={r.question?.body ?? ""}
         initialPostUrl={r.question?.socialPostUrl ?? ""}
       />
     </DashboardShell>

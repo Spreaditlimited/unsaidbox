@@ -1,0 +1,17 @@
+{
+  "appliedAt": "2026-10-14T10:27:47.831Z",
+  "database": "unsaidbox",
+  "existingDataModified": false,
+  "migrations": [
+    {
+      "name": "20261014095000_marketing_consent",
+      "tablesCreated": 4,
+      "checksum": "cd387af16cdedaddba10ee66e734f7b04a739e267025940904cd843dad51f3b9"
+    },
+    {
+      "name": "20261014110000_email_leads",
+      "tablesCreated": 2,
+      "checksum": "c2ad7c8fd2e20f45cdf327d32a170b77874429ab9fba7dc67de7a0ef315ebd24"
+    }
+  ]
+}

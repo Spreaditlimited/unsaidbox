@@ -32,6 +32,11 @@ export default function Safety() {
           prevent a recipient from manually copying or photographing words they
           can read.
         </p>
+        <h2>Private-analysis downloads</h2>
+        <p>Recipients can review their responses and, with Pro, download new and existing responses for their own private analysis without a separate sender opt-in. This does not permit public sharing. Anonymous text can still contain identifying details, so avoid including sensitive personal information and keep analysis files private. Export files are access-controlled and expire after 24 hours; a copy already downloaded is outside UnsaidBox and cannot be recalled. Private follow-up messages are not included in exports.</p>
+        <h2>Optional private follow-ups</h2>
+        <p>Senders can opt in when submitting a message, answer or form. We store a hash of a secret return link, the conversation and its replies. No sender name, email or account is required. Anyone with that link can access the conversation as the sender, so keep it private. An essential, HTTP-only cookie remembers access on that browser. Lost links cannot be recovered.</p>
+        <p>Follow-up replies never appear in public pages, share cards or CSV exports. Either side can permanently close the conversation. Return access expires after 90 days; expiry does not erase stored replies. Deleting the original submission or form entry also removes its conversation. Senders can report a concern from the conversation. Administrators with database access can access stored content; this is not end-to-end encrypted messaging. No email notifications are sent for private replies.</p>
         <h2>Public sharing</h2>
         <p>
           Owners must approve and explicitly publish individual responses.
@@ -48,6 +53,9 @@ export default function Safety() {
           signed in; no sender identity is attached to message records.
         </p>
         <h2>Support and account emails</h2>
+        <p>You can also request marketing updates without creating an account. We store your first name, email address, consent wording/version and request/confirmation times separately from anonymous submissions. A single-use confirmation link expires after 24 hours; opening the page alone does not subscribe you. We store a hash of that token and never use it to sign you into an account. Confirmed email signups join the UnsaidBox marketing audience; unsubscribe through any marketing email.</p>
+        <p>Marketing emails are optional. Verified account owners can choose UnsaidBox tips, product updates and occasional offers in their dashboard. We record the consent wording, version, source and time of each choice. Registering, paying for a plan or submitting anonymous feedback does not subscribe anyone to marketing.</p>
+        <p>Brevo processes marketing subscriber email addresses and campaign delivery and engagement information. We do not send anonymous submissions or private inbox links to Brevo for marketing. Withdraw consent in dashboard Settings or use the unsubscribe link in an email. Withdrawal does not disable essential account and security emails. A campaign already submitted for processing may still arrive.</p>
         <p>
           Contacting support is different from sending an anonymous message: the
           contact form sends your name, email address, subject and enquiry to

@@ -3,6 +3,8 @@ import { useActionState, useEffect, useRef } from "react";
 import { Captcha, useCaptcha } from "./Captcha";
 import type { Result } from "@/app/actions";
 import { AlertDialog } from "radix-ui";
+import { CopyLink } from './CopyLink';
+import Link from 'next/link';
 type Props = {
   action: (state: Result, data: FormData) => Promise<Result>;
   children: React.ReactNode;
@@ -78,7 +80,13 @@ export function ActionForm({
       <div className="success-message" role="status">
         <h2>{successTitle}</h2>
         <p>{state.success}</p>
-        <p className="fine">You can close this page now.</p>
+        {state.followupLink ? <div className="privacy-note">
+          <h3>Keep your private return link</h3>
+          <p>Only you and the owner can continue here. Anyone with this link can read and reply as you—never post it publicly. There are no email notifications; return to check for replies.</p>
+          <CopyLink path={state.followupLink} label="Copy private return link" />
+          <Link className="button" href={state.followupLink} prefetch={false}>Open private conversation →</Link>
+          <p className="fine">Save the link before closing this page. Lost links cannot be recovered.</p>
+        </div> : <p className="fine">You can close this page now.</p>}
       </div>
     );
   return (
@@ -100,6 +108,7 @@ export function ActionForm({
       {state.error && (
         <p className="form-error" role="alert">
           {state.error}
+          {state.upgradeAvailable ? <> Alternatively, <Link className="plan-upgrade-link" href="/dashboard/billing#upgrade-pro">Upgrade to Pro</Link>.</> : null}
         </p>
       )}
       {state.success && (

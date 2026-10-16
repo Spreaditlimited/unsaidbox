@@ -8,6 +8,13 @@ const config: NextConfig = {
   async headers() {
     return [
       {
+        source: '/follow-up/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-store, max-age=0' },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
+      },
+      {
         source: "/:path*",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },

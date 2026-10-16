@@ -1,0 +1,72 @@
+APPLE SIGN-IN — LOCAL IMPLEMENTATION, NOT DEPLOYED
+
+Reuses SocialIdentity and OAuthAttempt. No new migration is required.
+Personal accounts only; administrator authentication is unchanged.
+
+APPLE DEVELOPER SETUP
+1. Sign in to developer.apple.com/account with an enrolled Apple Developer team.
+2. Under Certificates, Identifiers & Profiles, configure a primary App ID with
+   Sign in with Apple enabled. Use your existing eligible primary App ID or
+   create the one required by Apple's web authentication setup.
+3. Create a Services ID for the website (suggested: com.unsaidbox.web).
+   Enable Sign in with Apple, select the primary App ID and configure:
+   Domain: unsaidbox.com
+   Return URL: https://unsaidbox.com/api/auth/callback/apple
+4. Create a Sign in with Apple key associated with that primary App ID.
+   Download the .p8 private key securely. Record the Key ID and Team ID.
+   Never paste the private key in chat, commit it, or expose it with NEXT_PUBLIC_.
+5. Under Services > Sign in with Apple for Email Communication, register
+   hello@unsaidbox.com and the actual outbound email domains. Verify Hostinger
+   SPF/DKIM alignment. Test delivery to an Apple private relay address before launch.
+
+SERVER-ONLY PRODUCTION CONFIGURATION
+UNSAIDBOX_APPLE_AUTH_CLIENT_ID = Services ID, not App ID
+UNSAIDBOX_APPLE_AUTH_TEAM_ID = Apple developer Team ID
+UNSAIDBOX_APPLE_AUTH_KEY_ID = Sign in with Apple Key ID
+UNSAIDBOX_APPLE_AUTH_PRIVATE_KEY = complete PEM contents of the .p8 key
+PEM values accept real newlines or escaped \\n. Use a quoted value in local env files.
+Client secrets are signed per request with ES256 and expire after five minutes.
+The underlying Apple signing key must still be protected and rotated if compromised.
+
+LOCAL TESTING
+Apple does NOT accept localhost, IP-address or HTTP callbacks. Do not use live
+credentials as an automatic local fallback. Configure a separate Services ID
+and approved HTTPS development domain forwarding to the local app, then set:
+UNSAIDBOX_APPLE_AUTH_TEST_CLIENT_ID
+UNSAIDBOX_APPLE_AUTH_TEST_TEAM_ID
+UNSAIDBOX_APPLE_AUTH_TEST_KEY_ID
+UNSAIDBOX_APPLE_AUTH_TEST_PRIVATE_KEY
+UNSAIDBOX_APPLE_AUTH_TEST_ORIGIN=https://your-approved-development-domain
+Register the matching /api/auth/callback/apple return URL with Apple. Access
+the app on this same HTTPS origin when testing. Do not weaken Next.js origin
+checks or expose the entire development server without deliberate access controls.
+Vercel preview authentication is disabled. Production uses unsaidbox.com only.
+The button is absent until all required settings and a valid HTTPS origin exist.
+No credentials or hosting configuration were changed by this implementation.
+
+SECURITY AND BEHAVIOR
+- Code exchange and signed ID-token verification use openid-client.
+- Expiring, single-use state and nonce plus a browser-binding cookie protect callbacks.
+- Only the Apple flow cookie uses SameSite=None; it is Secure and HttpOnly,
+  required because Apple returns a cross-site form POST. Setup cookies stay Lax.
+- Callback bodies are bounded; unsigned user/name data is not trusted.
+- Identity is provider + subject; returning users need not provide an email again.
+- New users choose their name/username and accept the adult/terms requirements.
+- Existing matching email requires the existing password and explicit link consent.
+- A hidden Apple relay email does not identify an existing real-email account.
+  It may create a separate account; there is no silent merging or guessed linkage.
+- Both private.icloud.com and privaterelay.appleid.com are accepted as verified emails.
+- No Apple access/refresh tokens are persisted. Provider grant revocation and Apple
+  server-to-server account-event synchronization are not implemented in this scope.
+
+ACCEPTANCE BEFORE ENABLING LIVE
+Complete real Apple consent in a browser with shared and hidden email options;
+check new-account onboarding, returning sign-in, existing-email password linking,
+cancel/retry, suspended-account rejection, and relay email delivery. Unit tests
+and local rendering checks do not substitute for this provider-authorized test.
+Deploy only with explicit approval; leave unrelated billing changes local.
+
+OFFICIAL REFERENCES
+https://developer.apple.com/help/account/capabilities/configure-sign-in-with-apple-for-the-web
+https://developer.apple.com/help/account/capabilities/create-a-sign-in-with-apple-private-key
+https://developer.apple.com/help/account/capabilities/configure-private-email-relay-service/

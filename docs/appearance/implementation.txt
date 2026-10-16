@@ -1,0 +1,30 @@
+UnsaidBox appearance
+
+Light is the default. Visitors can explicitly choose Light, Dark or System
+using the shared accessible Picker in public, authentication, dashboard,
+administration and standalone response layouts.
+
+The architecture follows the approach reviewed in Effikos: an early fixed
+initialization script, a client provider, semantic colour roles and a local
+preference. UnsaidBox imports no Effikos runtime code, credentials or services.
+
+The preference is stored under unsaidbox:appearance:v1. System follows OS
+changes; storage events synchronize tabs. Blocked storage keeps the choice
+for the current visit and announces that it could not be saved. Appearance
+does not set cookies, make server requests or emit analytics.
+
+app/theme.css defines light and dark semantic palettes. Use these roles for
+future interface colours, including text, surfaces, borders, status messages,
+focus and solid buttons. A bright link accent and a solid button accent are
+separate so white button labels remain readable in dark mode.
+
+Share-card canvases, export swatches, provider logos and fixed illustrations
+retain their intentional palettes. Print uses the light palette. Email HTML
+uses its own styles rather than inheriting a browser appearance preference.
+
+colour-migration.json records the source colour conversion for review. The
+migration script is a one-time audit tool, not part of application startup.
+
+Verification: tests/theme.test.mjs checks initial preferences, blocked storage,
+semantic text and filled-control contrast, palette coverage and shell controls.
+tests/stats-colours.test.mjs checks status colours in both palettes.

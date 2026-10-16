@@ -1,10 +1,16 @@
 "use server";
+import { recordMilestone } from '@/lib/account-activity';
+import { scheduleEmails } from '@/lib/email';
+import { lockPlanOwner, assertActiveSlot, consumeSubmission } from "@/lib/plans";
 import { redirect, unstable_rethrow } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { requireAccount, rateLimit } from "@/lib/auth";
 import { verifyCaptcha } from "@/lib/captcha.mjs";
 import { InputError } from "@/lib/security.mjs";
+import { digest } from '@/lib/security.mjs';
+import { followupsReady } from '@/lib/followups';
+import { FOLLOWUP_DAYS, validFollowupToken } from '@/lib/followup-policy.mjs';
 import {
   FormInputError,
   readFeedbackForm,
@@ -57,6 +63,7 @@ export async function saveFeedbackForm(
       }
     }
     await db().$transaction(async (tx) => {
+      await lockPlanOwner(tx, account.id);
       const previous = id
         ? await tx.feedbackForm.findFirst({
             where: { id, accountId: account.id },
@@ -84,6 +91,7 @@ export async function saveFeedbackForm(
           );
       }
       const publish = operation === "publish";
+      if (publish) await assertActiveSlot(tx, account.id, 'forms', Boolean(previous?.linkActive && previous.acceptingResponses));
       const values = {
         ...data,
         ...(image
@@ -118,7 +126,8 @@ export async function saveFeedbackForm(
         });
         savedId = created.id;
       }
-    });
+    }, { isolationLevel: 'ReadCommitted' });
+    if(!id)recordMilestone(account.id,'form');
   } catch (error) {
     return failure(error);
   }
@@ -137,6 +146,7 @@ export async function changeFeedbackForm(
     await rateLimit(`form-change:${a.id}`, 60, 3600);
     const operation = String(form.get("operation"));
     await db().$transaction(async (tx) => {
+      await lockPlanOwner(tx, a.id);
       const previous = await tx.feedbackForm.findFirst({
         where: { id, accountId: a.id },
       });
@@ -162,6 +172,7 @@ export async function changeFeedbackForm(
         throw new FormInputError("Choose a valid action.");
       if (previous.blocked || !previous.locked)
         throw new FormInputError("This form cannot be opened right now.");
+      if (operation === 'resume') await assertActiveSlot(tx, a.id, 'forms', previous.linkActive && previous.acceptingResponses);
       const result = await tx.feedbackForm.updateMany({
         where: {
           id,
@@ -179,7 +190,7 @@ export async function changeFeedbackForm(
         throw new FormInputError(
           "This form changed. Reload the page and try again.",
         );
-    });
+    }, { isolationLevel: 'ReadCommitted' });
   } catch (error) {
     return failure(error);
   }
@@ -226,7 +237,14 @@ export async function submitFeedbackForm(
       throw new FormInputError("Reload the form before sending.");
     await rateLimit(`feedback-submit:${id}`, 300, 3600);
     let thankYou = "Thank you. Your response has been received privately.";
+    let followupLink: string | undefined;
+    let createdEntry=false;
+    const followupToken = form.get('allowFollowup') === 'on' ? String(form.get('followupToken') ?? '') : null;
+    if (followupToken !== null && (!validFollowupToken(followupToken) || !(await followupsReady()))) throw new FormInputError('Reload the form before requesting a private follow-up.');
+    const target = await db().feedbackForm.findUnique({ where: { id }, select: { accountId: true } });
+    if (!target) throw new FormInputError('This form is not available.');
     await db().$transaction(async (tx) => {
+      await lockPlanOwner(tx, target.accountId);
       // Lock the parent row before checking state: closing a form and submitting cannot race.
       const gate = await tx.feedbackForm.updateMany({
         where: {
@@ -260,7 +278,12 @@ export async function submitFeedbackForm(
           where: { id },
           data: { responseCount: { decrement: 1 } },
         });
+        if (followupToken) {
+          const existing = await tx.followupConversation.findUnique({ where: { entryId: previous.id }, select: { tokenHash: true } });
+          if (existing?.tokenHash === digest(followupToken)) followupLink = `/follow-up#${followupToken}`;
+        }
       } else {
+        await consumeSubmission(tx, target.accountId, undefined, id);
         await tx.feedbackEntry.create({
           data: {
             formId: id,
@@ -268,13 +291,21 @@ export async function submitFeedbackForm(
             shareAllowed:
               current!.allowSharing && form.get("shareAllowed") === "on",
             answers: { create: answers },
+            ...(followupToken ? { followup: { create: {
+              accountId: target.accountId, tokenHash: digest(followupToken),
+              expiresAt: new Date(Date.now() + FOLLOWUP_DAYS * 86400000),
+            } } } : {}),
           },
         });
+        if (followupToken) followupLink = `/follow-up#${followupToken}`;
+        createdEntry=true;
       }
       thankYou = current!.thankYou;
-    });
+    }, { isolationLevel: 'ReadCommitted' });
+    if(createdEntry)recordMilestone(target.accountId,'response');
     refresh(id);
-    return { success: thankYou };
+    scheduleEmails();
+    return { success: thankYou, ...(followupLink ? { followupLink } : {}) };
   } catch (error) {
     return failure(error);
   }

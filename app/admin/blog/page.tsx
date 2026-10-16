@@ -7,6 +7,7 @@ import { AdminShell } from "@/components/AdminShell";
 import { AdminHeading, Pagination } from "@/components/AdminUI";
 import { Picker } from "@/components/ui/Picker";
 import { BlogImageControl } from "@/components/blog/BlogImageControl";
+import { publicationLabel } from "@/lib/blog-time.mjs";
 export const dynamic = "force-dynamic";
 export default async function BlogAdmin({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; page?: string }> }) {
   const admin = await requireAdministrator();
@@ -21,14 +22,14 @@ export default async function BlogAdmin({ searchParams }: { searchParams: Promis
     <div className="blog-admin-heading"><AdminHeading eyebrow="Content and growth" title="Blog" description="Helpful articles that turn curious readers into confident creators." /><Link className="button" href="/admin/blog/new">New article</Link></div>
     <section className="panel">
       <form className="blog-filters"><label>Search articles<input name="q" defaultValue={query.search} placeholder="Title or URL slug" /></label><Picker name="status" label="Status" key={query.status} defaultValue={query.status || "ALL"} options={[{ value: "ALL", label: "All articles" }, { value: "DRAFT", label: "Drafts" }, { value: "SCHEDULED", label: "Scheduled" }, { value: "PUBLISHED", label: "Published" }]} /><button className="button secondary">Search</button></form>
-      <p className="fine">{total} articles · newest publication / scheduled date first. Dates shown in UTC.</p>
+      <p className="fine">{total} articles · newest publication / scheduled date first. Dates shown in UK time (Europe/London).</p>
       {!canGenerate && <p className="fine">Image generation needs a dedicated UnsaidBox OpenAI key and model. Manual cover uploads are available in each article.</p>}
     </section>
     <div className="blog-admin-list">{posts.map(post => {
       const image = blogImageUrl(post, true);
       return <article className="panel blog-admin-row" key={post.id}>
         <div className="blog-thumb">{image ? <img src={image} alt="" loading="lazy" /> : <span>No cover yet</span>}</div>
-        <div className="blog-row-content"><span className="badge">{blogStatus(post)}</span><h2><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></h2><p className="fine">{post.category} · {post.publishAt ? post.publishAt.toISOString().slice(0, 16).replace("T", " ") : `Created ${post.createdAt.toISOString().slice(0, 10)}`}</p><p className="fine">/blog/{post.slug}</p></div>
+        <div className="blog-row-content"><span className="badge">{blogStatus(post)}</span><h2><Link href={`/admin/blog/${post.id}`}>{post.title}</Link></h2><p className="fine">{post.category} · {post.publishAt ? publicationLabel(post.publishAt) : `Created ${publicationLabel(post.createdAt)}`}</p><p className="fine">/blog/{post.slug}</p></div>
         <div className="response-actions"><BlogImageControl id={post.id} title={post.title} canGenerate={canGenerate} compact /><Link className="button secondary" href={`/admin/blog/${post.id}`}>Edit</Link><Link className="button secondary" href={`/admin/blog/${post.id}/preview`}>Preview</Link></div>
       </article>;
     })}</div>

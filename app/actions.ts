@@ -1,4 +1,8 @@
 "use server";
+import { recordMilestone } from '@/lib/account-activity';
+import { followupsReady } from '@/lib/followups';
+import { FOLLOWUP_DAYS } from '@/lib/followup-policy.mjs';
+import { lockPlanOwner, assertActiveSlot, consumeSubmission } from "@/lib/plans";
 import { verifyCaptcha } from "@/lib/captcha.mjs";
 import { revalidatePath } from "next/cache";
 import { redirect, unstable_rethrow } from "next/navigation";
@@ -25,12 +29,12 @@ import { scheduleEmails } from "@/lib/email";
 import { facebookPostUrl } from "@/lib/share.mjs";
 import { canSubmit } from "@/lib/publishing.mjs";
 
-export type Result = { error?: string; success?: string };
+export type Result = { error?: string; success?: string; followupLink?: string; conversationId?: string; upgradeAvailable?: boolean };
 const field = (f: FormData, name: string) => f.get(name);
 const checked = (f: FormData, name: string) => f.get(name) === "on";
 function failure(error: unknown): Result {
   unstable_rethrow(error);
-  if (error instanceof InputError) return { error: error.message };
+  if (error instanceof InputError) return { error: error.message, ...('upgradeAvailable' in error && error.upgradeAvailable === true ? { upgradeAvailable: true } : {}) };
   return {
     error:
       "The request could not be completed. Check your details and try again.",
@@ -176,7 +180,10 @@ export async function createQuestion(
     await verifyCaptcha(form, "createQuestion");
     const account = await requireAccount();
     await rateLimit(`questions:${account.id}`, 30, 3600);
-    const question = await db().question.create({
+    const question = await db().$transaction(async tx => {
+      await lockPlanOwner(tx, account.id);
+      await assertActiveSlot(tx, account.id, 'questions');
+      return tx.question.create({
       data: {
         accountId: account.id,
         body: textValue(field(form, "body"), "Question", 5000),
@@ -184,8 +191,10 @@ export async function createQuestion(
           ? "PRIVATE_ONLY"
           : "OWNER_MAY_SHARE",
       },
-    });
+      });
+    }, { isolationLevel: 'ReadCommitted' });
     id = question.id;
+    recordMilestone(account.id,'question');
   } catch (error) {
     return failure(error);
   }
@@ -209,7 +218,14 @@ export async function saveQuestion(
     const socialPostUrl = rawUrl ? facebookPostUrl(rawUrl) : null;
     if (rawUrl && !socialPostUrl)
       throw new InputError("Enter a valid HTTPS Facebook post link.");
-    const result = await db().question.updateMany({
+    const result = await db().$transaction(async tx => {
+      await lockPlanOwner(tx, account.id);
+      const previous = await tx.question.findFirst({ where: { id, accountId: account.id } });
+      if (!previous) throw new InputError('Question not found.');
+      if (checked(form, 'linkActive') && checked(form, 'acceptingResponses')) {
+        await assertActiveSlot(tx, account.id, 'questions', previous.linkActive && previous.acceptingResponses);
+      }
+      return tx.question.updateMany({
       where: { id, accountId: account.id },
       data: {
         body: textValue(field(form, "body"), "Question", 5000),
@@ -220,7 +236,8 @@ export async function saveQuestion(
         discoveryApproved: false,
         socialPostUrl,
       },
-    });
+      });
+    }, { isolationLevel: 'ReadCommitted' });
     if (!result.count) throw new InputError("Question not found.");
     revalidatePath("/", "layout");
     return {
@@ -279,7 +296,10 @@ export async function submitMessage(
     if (!account || account.status !== "ACTIVE")
       throw new InputError("This inbox is not available.");
     await rateLimit(`submit:${account.id}`, 100, 3600);
+    const followupToken = checked(form, 'allowFollowup') ? token() : null;
+    if (followupToken && !(await followupsReady())) throw new InputError('Private follow-ups are not available yet. Uncheck that option to send your message.');
     await db().$transaction(async (tx) => {
+      await lockPlanOwner(tx, account.id);
       const owner = await tx.account.findUnique({
         where: { id: account.id },
         select: {
@@ -303,14 +323,22 @@ export async function submitMessage(
         throw new InputError(
           "The privacy setting changed. Reload this page and review it before sending.",
         );
+      await consumeSubmission(tx, owner.id, questionId ?? undefined);
       await tx.submission.create({
-        data: { accountId: owner.id, questionId, body, sharingPolicy },
+        data: { accountId: owner.id, questionId, body, sharingPolicy,
+          ...(followupToken ? { followup: { create: {
+            accountId: owner.id, tokenHash: digest(followupToken),
+            expiresAt: new Date(Date.now() + FOLLOWUP_DAYS * 86400000),
+          } } } : {}),
+        },
       });
       await queueActivityEmail(tx, owner.id, Boolean(questionId));
-    });
+    }, { isolationLevel: 'ReadCommitted' });
+    recordMilestone(account.id,'response');
     scheduleEmails();
     revalidatePath("/dashboard");
     return {
+      ...(followupToken ? { followupLink: `/follow-up#${followupToken}` } : {}),
       success:
         "Your message has been received privately. It is not automatically published.",
     };

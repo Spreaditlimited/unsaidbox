@@ -6,6 +6,7 @@ const paths = {
   question:
     "M8 9a4 4 0 0 1 8 0c0 3-4 3-4 6 M12 18h.01 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z",
   settings: "M4 7h16 M4 17h16 M8 4v6 M16 14v6",
+  payment: "M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z M2 10h20 M6 15h4",
   shield: "m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3z m-4 9 3 3 5-6",
   arrow: "M5 12h14 m-6-6 6 6-6 6",
   plus: "M12 5v14 M5 12h14",

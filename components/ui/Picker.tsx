@@ -1,9 +1,9 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Select } from "radix-ui";
 
-type Option = { value: string; label: string; disabled?: boolean };
+type Option = { value: string; label: string; disabled?: boolean; icon?: ReactNode };
 
 /** All option pickers use this accessible, themed control, never a native menu. */
 export function Picker({
@@ -12,29 +12,41 @@ export function Picker({
   defaultValue,
   options,
   disabled = false,
+  value: controlledValue,
+  onValueChange,
+  iconOnly = false,
+  hint,
 }: {
   name: string;
   label: string;
   defaultValue: string;
   options: readonly Option[];
   disabled?: boolean;
+  iconOnly?: boolean;
+  hint?: string;
+  value?: string;
+  onValueChange?: (value:string)=>void;
 }) {
   const id = useId();
-  const [value, setValue] = useState(defaultValue);
+  const [localValue, setValue] = useState(defaultValue);
+  const value=controlledValue??localValue;
+  const choose=(next:string)=>{setValue(next);onValueChange?.(next);};
   return (
     <div className="picker-field">
       <label id={`${id}-label`} htmlFor={id}>
         {label}
       </label>
       <input type="hidden" name={name} value={value} disabled={disabled} />
-      <Select.Root value={value} onValueChange={setValue} disabled={disabled}>
+      <Select.Root value={value} onValueChange={choose} disabled={disabled}>
         <Select.Trigger
           id={id}
           className="picker-trigger"
-          aria-labelledby={`${id}-label`}
+          aria-labelledby={iconOnly ? undefined : `${id}-label`}
+          aria-label={iconOnly ? `${label}: ${options.find(option=>option.value===value)?.label}` : undefined}
+          title={iconOnly ? label : undefined}
         >
-          <Select.Value />
-          <Select.Icon className="picker-chevron">
+          {iconOnly ? options.find(option=>option.value===value)?.icon : <Select.Value />}
+          {!iconOnly && <Select.Icon className="picker-chevron">
             <svg
               width="18"
               height="18"
@@ -50,12 +62,13 @@ export function Picker({
                 strokeLinejoin="round"
               />
             </svg>
-          </Select.Icon>
+          </Select.Icon>}
         </Select.Trigger>
         <Select.Portal>
           <Select.Content
-            className="picker-content"
+            className={iconOnly ? "picker-content appearance-menu" : "picker-content"}
             position="popper"
+            align={iconOnly ? "end" : "start"}
             sideOffset={6}
             collisionPadding={12}
           >
@@ -70,12 +83,14 @@ export function Picker({
                   value={option.value}
                   disabled={option.disabled}
                 >
+                  {option.icon}
                   <Select.ItemText>{option.label}</Select.ItemText>
                   <Select.ItemIndicator className="picker-check">
                     ✓
                   </Select.ItemIndicator>
                 </Select.Item>
               ))}
+              {hint && <small className="picker-hint">{hint}</small>}
             </Select.Viewport>
             <Select.ScrollDownButton className="picker-scroll">
               ↓

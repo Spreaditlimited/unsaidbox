@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="400" viewBox="0 0 320 100" role="img" aria-labelledby="title description">
+  <title id="title">UnsaidBox</title>
+  <desc id="description">UnsaidBox's indigo box symbol beside the dark UnsaidBox wordmark.</desc>
+  <g transform="translate(12 16) scale(2)">
+    <rect width="34" height="34" rx="10" fill="#5850B8"/>
+    <path d="M9 13.5 17 18l8-4.5M9 13.5V23h16v-9.5M9 13.5l8-4.5 8 4.5" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M17 9v5" fill="none" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round"/>
+  </g>
+  <text x="100" y="65" fill="#202332" font-family="Arial, Helvetica, sans-serif" font-size="42" letter-spacing="-1.6"><tspan font-weight="700">Unsaid</tspan><tspan font-weight="400">Box</tspan></text>
+</svg>

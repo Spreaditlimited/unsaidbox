@@ -1,0 +1,48 @@
+GOOGLE SIGN-IN — LOCAL IMPLEMENTATION, NOT DEPLOYED
+
+Local Next development uses only UNSAIDBOX_GOOGLE_AUTH_TEST_CLIENT_ID and
+UNSAIDBOX_GOOGLE_AUTH_TEST_CLIENT_SECRET. Open http://localhost:3001/login.
+Its registered callback must be exactly:
+http://localhost:3001/api/auth/callback/google
+
+Production uses only UNSAIDBOX_GOOGLE_AUTH_CLIENT_ID and
+UNSAIDBOX_GOOGLE_AUTH_CLIENT_SECRET; callback:
+https://unsaidbox.com/api/auth/callback/google
+Vercel previews are disabled until given their own explicit OAuth configuration.
+All credentials are server-only. Never commit .env or .env.local or print secrets.
+
+DATABASE
+Apply ONLY prisma/migrations/20261007180000_google_sign_in/migration.sql to the
+dedicated unsaidbox database with a schema-admin account. This adds SocialIdentity
+and OAuthAttempt. Do not run all pending migrations or change billing tables.
+Runtime account needs its normal SELECT/INSERT/UPDATE/DELETE grants on these tables.
+Restart the local dev server after Prisma generation/table installation.
+
+FLOW
+Start action verifies origin and production CAPTCHA. A ten-minute single-use
+database state is bound to an HttpOnly SameSite=Lax browser cookie. OpenID Connect
+checks state, PKCE, nonce, issuer, audience, expiry and ID-token signature.
+Only verified-email claims are accepted. Access/refresh/ID tokens are not saved.
+Expired attempts are purged when a new login starts. No identifying data is put
+in redirect URLs. Google response photos are not imported or made public.
+
+Already-linked Google subject: issue a personal session only for an active account.
+Same-email account: explicitly link using its existing password and consent. Never
+silently merge by email, grant administrator access, or modify separate admin auth.
+New account: choose username/name and agree to age/terms. No usable password is
+created; the existing password recovery flow can be used to add one later.
+Private/public/sharing defaults remain unchanged. Google login is not a Pro feature.
+
+MANUAL ACCEPTANCE TESTS AFTER THE TABLES ARE INSTALLED
+1. Continue with Google from localhost:3001/login using a configured test user.
+2. Cancel at Google; expect a safe message and no new account/session.
+3. Existing email: wrong password must not link; correct password + consent links
+   to the same account with its existing questions, responses and billing intact.
+4. New Google identity: consent + valid available username required; account starts
+   with public page off. Repeated callback/completion must not create duplicates.
+5. Sign out, then Google sign-in again: no repeat linking/onboarding.
+6. Separate /admin/login must continue to use administrator credentials only.
+
+Before production: deploy only with express approval, install tables, configure the
+production credentials in Vercel and verify the Google consent screen/public status.
+Apple sign-in is not implemented or enabled by this change.

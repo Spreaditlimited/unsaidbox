@@ -6,6 +6,7 @@ import { adminUserSelect } from "@/lib/admin-data";
 import { AdminShell } from "@/components/AdminShell";
 import { AdminHeading, StatCard, StatusBadge, adminDate } from "@/components/AdminUI";
 import { AdminAccountActions } from "@/components/AdminAccountActions";
+import { AdminCustomerInsights } from '@/components/AdminCustomerInsights';
 
 export default async function UserDetails({ params }: { params: Promise<{ id: string }> }) {
   const administrator = await requireAdministrator();
@@ -35,6 +36,7 @@ export default async function UserDetails({ params }: { params: Promise<{ id: st
       {user.status === "ACTIVE" && user.publicPageEnabled && <Link className="button secondary" href={`/u/${user.username}`} target="_blank" rel="noopener noreferrer">View public page ↗</Link>}
       </section>
     </div>
+    <AdminCustomerInsights accountId={id} />
     <section className="panel"><h2>Account controls</h2><p className="admin-note">Changes are recorded against your administrator account. These controls do not expose passwords, impersonate the user or change their publication choices.</p><AdminAccountActions id={id} username={user.username} status={user.status} /></section>
     <div className="admin-two-column">
       <section className="panel"><h2>Recent email activity</h2><p className="admin-note">Last five queue records. SMTP acceptance does not confirm inbox delivery. Email contents and reset links are excluded.</p>

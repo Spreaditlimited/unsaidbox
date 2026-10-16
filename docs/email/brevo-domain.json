@@ -1,0 +1,35 @@
+{
+  "domain": "unsaidbox.com",
+  "authenticated": false,
+  "verified": false,
+  "folderId": 23,
+  "listId": 24,
+  "dnsRecords": {
+    "dkim_record": null,
+    "dkim1Record": {
+      "type": "CNAME",
+      "value": "b1.unsaidbox-com.dkim.brevo.com",
+      "host_name": "brevo1._domainkey",
+      "status": false
+    },
+    "dkim2Record": {
+      "type": "CNAME",
+      "value": "b2.unsaidbox-com.dkim.brevo.com",
+      "host_name": "brevo2._domainkey",
+      "status": false
+    },
+    "brevo_code": {
+      "type": "TXT",
+      "value": "brevo-code:ac7ad838dec30cc5ff231fc69fbc2516",
+      "host_name": "@",
+      "status": false
+    },
+    "dmarc_record": {
+      "type": "TXT",
+      "value": "v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com",
+      "host_name": "_dmarc",
+      "status": false
+    }
+  },
+  "checkedAt": "2026-10-14T09:53:21.265Z"
+}

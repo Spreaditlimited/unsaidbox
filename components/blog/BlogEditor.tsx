@@ -4,15 +4,19 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Dialog } from "radix-ui";
 import { Picker } from "../ui/Picker";
+import { DatePicker } from "../ui/DatePicker";
 import { Captcha, useCaptcha } from "../Captcha";
 import { saveBlog } from "@/app/admin/blog/actions";
 import type { Result } from "@/app/actions";
+import { blogTimeZone, publicationFields, publicationLabel, scheduledInstant } from "@/lib/blog-time.mjs";
 
 export type BlogDraft = { id: string | null; revision: number; title: string; slug: string; excerpt: string; contentHtml: string; category: string; authorName: string; seoTitle: string; seoDescription: string; imageAlt: string; published: boolean; publishAt: string | null };
 export function BlogEditor({ post, categories }: { post: BlogDraft; categories: string[] }) {
   const [draft, setDraft] = useState(post);
-  const [date, setDate] = useState(post.publishAt?.slice(0, 10) || "");
-  const [time, setTime] = useState(post.publishAt?.slice(11, 16) || "09:00");
+  const [date, setDate] = useState(() => publicationFields(post.publishAt).date);
+  const [time, setTime] = useState(() => publicationFields(post.publishAt).time);
+  let scheduleSummary = "Enter a valid UK date and time to see the exact publication time.";
+  try { const instant = scheduledInstant(date, time); scheduleSummary = `${publicationLabel(instant)} · ${instant.toISOString().slice(11, 16)} UTC`; } catch { /* Validated on the server on submit. */ }
   const [confirm, setConfirm] = useState<"publish" | "schedule" | "draft" | null>(null);
   const [linkOpen, setLinkOpen] = useState(false);
   const [link, setLink] = useState("");
@@ -47,6 +51,7 @@ export function BlogEditor({ post, categories }: { post: BlogDraft; categories: 
     <form ref={form} className="app-form blog-editor" onSubmit={e => { e.preventDefault(); if (post.published) setConfirm(post.publishAt && new Date(post.publishAt) > new Date() ? "schedule" : "publish"); else save("draft"); }}>
       <fieldset disabled={pending}>
         <input type="hidden" name="revision" value={post.revision} />
+        <input type="hidden" name="publishTimezone" value={blogTimeZone} />
         <section className="panel"><h2>Article</h2>
           {field("title", "Title", 180, true)}
           {field("slug", "URL slug · lowercase words separated by hyphens", 160, true)}
@@ -76,11 +81,12 @@ export function BlogEditor({ post, categories }: { post: BlogDraft; categories: 
           {field("imageAlt", "Cover image description", 300)}
         </section>
         <section className="panel"><h2>Publication</h2>
-          <p className="fine">All times below are UTC. Articles become public at their saved time. Preview links require administrator sign-in.</p>
-          <div className="blog-fields"><label>Publication date (YYYY-MM-DD)<input name="publishDate" placeholder="2026-10-08" value={date} onChange={e => setDate(e.target.value)} inputMode="numeric" /></label><label>Time (HH:MM, UTC)<input name="publishTime" placeholder="09:00" value={time} onChange={e => setTime(e.target.value)} inputMode="numeric" /></label></div>
+          <p className="fine">Schedule in UK time (Europe/London). Summer and winter clock changes are handled automatically. Articles become public at the saved time; no manual publishing step is needed.</p>
+          <div className="blog-fields"><DatePicker name="publishDate" label="Publication date" value={date} onChange={setDate} /><label>UK time (HH:MM)<input name="publishTime" placeholder="09:00" value={time} onChange={e => setTime(e.target.value)} inputMode="numeric" /></label></div>
+          <p className="fine" aria-live="polite">{scheduleSummary}</p>
           <div className="action-row blog-save-actions">
             <button type="submit" className="button">{pending ? "Saving…" : post.published ? "Save changes" : "Save draft"}</button>
-            {!post.published && <button type="button" className="button secondary" onClick={() => { if (form.current?.reportValidity()) setConfirm("publish"); }}>Publish now</button>}
+            {(!post.published || (post.publishAt && new Date(post.publishAt) > new Date())) && <button type="button" className="button secondary" onClick={() => { if (form.current?.reportValidity()) setConfirm("publish"); }}>Publish now</button>}
             <button type="button" className="button secondary" onClick={() => { if (form.current?.reportValidity()) setConfirm("schedule"); }}>Schedule</button>
             {post.published && <button type="button" className="button secondary" onClick={() => setConfirm("draft")}>Unpublish / cancel schedule</button>}
           </div>
@@ -89,7 +95,7 @@ export function BlogEditor({ post, categories }: { post: BlogDraft; categories: 
       </fieldset>
       {state.error && <p className="form-error" role="alert">{state.error}</p>}
     </form>
-    <Dialog.Root open={Boolean(confirm)} onOpenChange={open => { if (!open) setConfirm(null); }}><Dialog.Portal><Dialog.Overlay className="modal-overlay" /><Dialog.Content className="app-modal"><Dialog.Title className="modal-title">{confirm === "draft" ? "Return this article to draft?" : confirm === "schedule" ? "Schedule this article?" : "Publish these changes?"}</Dialog.Title><Dialog.Description className="modal-description">{confirm === "draft" ? "The article and its cover will no longer be publicly available. Your content remains in the CMS." : confirm === "schedule" ? `The article will become public on ${date || "your chosen date"} at ${time} UTC. Review the content before confirming.` : "The saved article and cover will be publicly available immediately."}</Dialog.Description><div className="modal-actions"><Dialog.Close asChild><button className="button secondary">Cancel</button></Dialog.Close><button className="button" onClick={() => save(confirm!)}>Confirm</button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
+    <Dialog.Root open={Boolean(confirm)} onOpenChange={open => { if (!open) setConfirm(null); }}><Dialog.Portal><Dialog.Overlay className="modal-overlay" /><Dialog.Content className="app-modal"><Dialog.Title className="modal-title">{confirm === "draft" ? "Return this article to draft?" : confirm === "schedule" ? "Schedule this article?" : "Publish these changes?"}</Dialog.Title><Dialog.Description className="modal-description">{confirm === "draft" ? "The article and its cover will no longer be publicly available. Your content remains in the CMS." : confirm === "schedule" ? `Publication: ${scheduleSummary}. Review the content before confirming.` : "The saved article and cover will be publicly available immediately."}</Dialog.Description><div className="modal-actions"><Dialog.Close asChild><button className="button secondary">Cancel</button></Dialog.Close><button className="button" onClick={() => save(confirm!)}>Confirm</button></div></Dialog.Content></Dialog.Portal></Dialog.Root>
     <Dialog.Root open={linkOpen} onOpenChange={setLinkOpen}><Dialog.Portal><Dialog.Overlay className="modal-overlay" /><Dialog.Content className="app-modal"><Dialog.Title className="modal-title">Article link</Dialog.Title><Dialog.Description className="modal-description">Use an https:// address or a local path beginning with /. Leave blank to remove a link.</Dialog.Description><label>Link address<input value={link} onChange={e => setLink(e.target.value)} /></label>{linkError && <p className="form-error" role="alert">{linkError}</p>}<div className="modal-actions"><Dialog.Close asChild><button className="button secondary">Cancel</button></Dialog.Close><button className="button" onClick={() => {
       const href = link.trim();
       if (href && !/^https:\/\/[^\s]+$/.test(href) && !/^\/(?!\/)[^\s]*$/.test(href)) { setLinkError("Enter an HTTPS address or local path."); return; }

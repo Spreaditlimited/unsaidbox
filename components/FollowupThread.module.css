@@ -1,0 +1,44 @@
+.publicCard { display: grid; gap: 24px; min-width: 0; }
+.publicCard > h1, .publicCard > p, .publicCard > form { margin: 0; }
+.publicCard > :global(.eyebrow) { margin-bottom: -12px; }
+.publicCard > :global(.button) { justify-self: start; }
+.publicCard > form { display: grid; gap: 24px; }
+.publicCard > form p { margin: 0; }
+.thread { display: grid; gap: 28px; width: 100%; min-width: 0; max-width: 880px; margin: 32px auto 0; }
+.publicCard .thread { margin: 8px 0 0; }
+.thread > * { min-width: 0; }
+.thread > form { margin: 0; padding-top: 28px; border-top: 1px solid var(--color-border); }
+.thread form { display: grid; gap: 20px; }
+.thread form fieldset { display: grid; gap: 14px; min-width: 0; }
+.thread form label, .thread form p { margin: 0; }
+.thread form label > textarea { margin-top: 10px; }
+.thread form > button { justify-self: start; }
+.notice { border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-purple-bg); padding: 22px; }
+.notice p { margin: 8px 0 0; color: var(--color-text-secondary); line-height: 1.7; }
+.original { padding: 20px 24px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); }
+.original summary, .footer summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
+.original p, .messages p { white-space: pre-wrap; overflow-wrap: anywhere; font-weight: 400; line-height: 1.8; margin: 12px 0 0; }
+.messages { display: grid; gap: 20px; padding: 0; margin: 0; list-style: none; }
+.messages li { padding: 24px; border-radius: 20px; width: 92%; border: 1px solid var(--color-border); }
+.owner { background: var(--color-purple-bg); justify-self: end; }
+.sender { background: var(--color-surface); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; font-size: .8rem; color: var(--color-text-secondary); }
+.meta strong { color: var(--color-accent); }
+.messages:empty { display: none; }
+.empty { text-align: center; padding: 24px 16px; margin: 0; color: var(--color-text-secondary); line-height: 1.75; }
+.footer { border-top: 1px solid var(--color-border); padding-top: 24px; display: grid; gap: 20px; }
+.footer > p { margin: 0; line-height: 1.7; }
+.footer details { padding-top: 16px; border-top: 1px solid var(--color-border); }
+.footer details > p { margin: 12px 0 0; line-height: 1.7; }
+.footer details > form { margin-top: 20px; }
+.footer summary { min-height: 44px; line-height: 1.6; }
+.original summary:focus-visible, .footer summary:focus-visible { outline: 2px solid var(--indigo); outline-offset: 4px; border-radius: 4px; }
+@media(max-width: 600px) {
+  .messages li { width: 97%; padding: 18px; }
+  .notice, .original { padding: 18px; }
+  .thread { gap: 24px; }
+  .publicCard { gap: 20px; }
+  .thread > form { padding-top: 24px; }
+  .thread form > button, .publicCard > :global(.button) { width: 100%; justify-self: stretch; white-space: normal; text-align: center; }
+  .meta { gap: 6px 16px; }
+}

@@ -28,6 +28,7 @@ async function fixture({ fails = false, busy = false } = {}) {
   const modules = {
     "server-only": {}, "sharp": { default: sharp }, "node:crypto": { randomBytes },
     "./db": { db: () => database }, "./security.mjs": { InputError }, "./blog-policy.mjs": { blogImagePrompt },
+    "./blog-cloudinary.mjs": { uploadBlogCover: async () => ({ cloudinaryPublicId: "unsaidbox/blog/post1/fixture", cloudinaryUrl: "https://res.cloudinary.com/fixture" }) },
   };
   const exports = {};
   const source = ts.transpileModule(await readFile("lib/blog-image.ts", "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;

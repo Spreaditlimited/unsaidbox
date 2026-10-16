@@ -1,0 +1,149 @@
+UNSAIDBOX BILLING — LOCAL IMPLEMENTATION STATUS
+
+Implemented: administrator-only desired catalogue pricing at /admin/billing,
+shared validated integer-minor-unit pricing, CAPTCHA, rate limiting, optimistic
+revision checking, and atomic audit events. Defaults: GBP 9/month or 90/year;
+USD 12/month or 120/year. Free remains free, not a Stripe subscription.
+
+DATABASE INSTALLATION
+The dedicated unsaidbox database needs this additive migration:
+prisma/migrations/20261007090000_billing_configuration/migration.sql
+An administrator must run it in the unsaidbox database. Do not grant DDL
+privileges to the runtime application user. Do not run all old migrations
+blindly: earlier tables may have been installed manually.
+The user installed BillingConfiguration and its pricing row in the VPS console.
+Verified locally: GBP 900/9000, USD 1200/12000, revision 1.
+The next additive migration is:
+prisma/migrations/20261007120000_billing_core/migration.sql
+It creates BillingCustomer, BillingPrice, BillingSubscription and BillingEvent.
+No migration is applied automatically by this change.
+
+The configuration contains only prices and an administrator ID, never keys.
+The existing .env remains ignored by Git. Keep all credentials server-only.
+UNSAID_STRIPE_TEST_SECRET_KEY is reserved for sandbox operations.
+UNSAID_STRIPE_SECRET_KEY is reserved for live operations; do not fall back to
+the live key when a test key is absent. A read-only sandbox API request passed;
+the sandbox catalogue setup has now completed after the user installed all five
+billing tables. The four approved recurring prices and a dedicated customer
+portal are configured in the sandbox, with price mappings saved in UnsaidBox.
+No customers, subscriptions or payments were created. Live Stripe is unchanged.
+The local webhook signing secret has been configured and matched to the app's
+sandbox key. Keep the Stripe CLI listener running during payment tests.
+
+PRICE CHANGE CONTRACT
+Saving catalogue prices does not change Stripe Prices, subscriptions, or
+entitlements. Stripe amount changes require new Price objects. Before enabling
+checkout, verify mode, currency, interval, amount, active status and product
+against server-side configuration. Use a configuration revision to reject
+stale checkout requests. Never trust a browser-submitted amount or Price ID.
+Existing subscribers retain their original Stripe Price. Migrating them to a
+new price requires a separate explicit workflow and customer communication.
+
+SANDBOX CORE IMPLEMENTED (END-TO-END TESTING STILL REQUIRED)
+- /dashboard/billing uses the existing dashboard, accessible segmented controls
+  and ActionForm. Currency/period selection updates a single price summary and
+  savings derived from the administrator's catalogue. No paid feature claims
+  are shown for features not yet implemented.
+- Status presentation distinguishes pending, overdue, paid and ended states.
+  A billing-specific error boundary warns against repeating an uncertain payment.
+- Checkout regression tests cover duplicate clicks, network interruption,
+  recovery with the exact original idempotency key/parameters, period changes,
+  stale prices, locks, ended subscriptions and wrong-customer/live sessions.
+- Recovered and newly created checkout sessions validate the customer binding.
+- Hosted subscription checkout with owner-scoped customer binding, catalogue
+  validation, a per-customer lock and durable idempotency parameters for retries.
+- Recurring amounts, currency, product and interval checked against Stripe.
+- Cancellation/payment updates/invoices in a dedicated Stripe customer portal.
+- /api/billing/stripe/webhook verifies the raw-body Stripe signature, rejects
+  live and Connect events, bounds body size and returns retryable errors.
+- Subscription updates and event receipts commit atomically; duplicate events
+  are ignored. Current Stripe state is retrieved under a customer lock rather
+  than replaying old snapshots. No anonymous content is sent to Stripe.
+- Authenticated Refresh billing status reconciles subscriptions with Stripe.
+- Sandbox state is isolated by mode and cannot grant production entitlements.
+- Unit tests cover signatures, event duplication, ownership, failed renewals,
+  transactional rollback, price matching, CAPTCHA and mode separation.
+
+SANDBOX SETUP AFTER INSTALLING THE FOUR TABLES
+1. In the local project, run npm run billing:setup-sandbox. It uses ONLY the test
+   key and creates/reuses a Pro product, four recurring Prices and a cancellation
+   portal configuration. Rerun after changing catalogue prices in administration.
+   It never changes existing subscriptions or deletes archived price mappings.
+2. In your Mac terminal, use Stripe CLI to authenticate to the SAME sandbox as
+   the saved key. Do not pass secret keys as command-line arguments.
+3. Start snapshot forwarding:
+   stripe listen --events checkout.session.completed,checkout.session.async_payment_succeeded,customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,invoice.paid,invoice.payment_failed,invoice.payment_action_required --forward-to http://localhost:3001/api/billing/stripe/webhook
+4. Save the listener's whsec_ value privately as UNSAID_STRIPE_TEST_WEBHOOK_SECRET
+   in .env. Never paste it in chat. It differs from a Dashboard endpoint secret.
+5. Set UNSAID_BILLING_MODE=test locally and restart the dev server. npm run dev
+   supervises the local database tunnel; see docs/local-development.txt for the
+   SSH-agent unlock requirement. Keep the Stripe listener running separately.
+   Do not enable this in production.
+6. Sign into a personal test account and visit /dashboard/billing. Use Stripe
+   test cards only. Admin and personal-account authentication stay separate.
+7. Verify successful payment, failed payment, duplicate submit/event, renewal,
+   cancellation, stale pricing, cross-account access and outage recovery.
+   Returned checkout URLs are not payment confirmation.
+
+SDK API version: Stripe 23 uses 2026-09-30.endive. Snapshot endpoint configuration
+should use the matching API version. No public webhook destination was created.
+
+PLAN FEATURES IMPLEMENTED LOCALLY
+The user installed the additive migration:
+prisma/migrations/20261007150000_plan_features/migration.sql
+PlanUsage and BrandSettings were verified readable without changing data.
+- Verified sandbox Pro gates for CSV and custom share-card branding.
+- Free: 500 submissions/month, 3 active questions, 2 active forms.
+- Pro: 5,000 submissions/month, 25 active questions, 20 active forms.
+- UTC calendar-month counters commit atomically with submissions; owner row
+  locks serialize quota changes. Deleting content never decrements usage.
+  First-use baseline includes remaining existing submissions in that month;
+  deletions before this feature existed cannot be reconstructed.
+- Dashboard warnings and a deduplicated 80% email for opted-in inbox notifications.
+- Downgrades retain content and settings. Only the oldest active links within
+  the plan limit accept submissions; owners can pause old links to free slots.
+- Custom share-card name, readable accent, sanitized logo and attribution control.
+  Profile photos are never reused. Existing downloaded files cannot be recalled.
+- Owner-scoped, monthly CSV downloads in batches of 200, with formula escaping.
+  Only approved shareable messages and consented form answers are exportable.
+  Private-only responses are excluded; no export files are stored on the server.
+- These entitlements and quotas currently operate only in local sandbox mode.
+  Test subscriptions never unlock production access or impose live quotas.
+- npm run billing:check-launch performs only read operations, checks database
+  tables/TLS and sandbox prices, then reports outstanding launch blockers.
+  Its non-zero exit status is deliberate until live launch is actually ready.
+
+REMAINING PRODUCT BILLING IMPLEMENTATION / VERIFICATION
+- Live checkout release gate, tax decision, live catalogue/provider validation.
+- Existing-user 60-day offer: requires explicit eligibility/cutoff confirmation
+  before any grants. Price approval alone must not grant benefits.
+- Public /pricing now reads the administrator catalogue, supports GBP/USD and
+  monthly/yearly display, and includes FAQs, navigation/footer links and sitemap
+  metadata. Pro remains explicitly unavailable until live launch.
+- Sandbox end-to-end tests after table installation and webhook configuration.
+- Paystack can follow; do not create duplicate subscriptions across providers.
+
+TAX AND LAUNCH
+VAT settings are now available at /admin/billing: off by default, percentage
+validated to two decimals, added on top (not inclusive). Stored in a separate
+BillingConfiguration row with id "vat"; no additional migration is needed.
+Saving settings is admin-only, CAPTCHA-protected, audited and revision-checked.
+An explicit acknowledgement covers the single fixed rate applying to all new
+checkouts; this is NOT jurisdiction/exemption detection or Stripe Tax automation.
+At sandbox checkout the verified exclusive Stripe TaxRate is created/reused
+automatically, then attached to the recurring line item. Restricted Stripe keys
+need Tax Rates read/write permission. Provider failures block checkout.
+Tax changes do not invalidate catalogue price mappings. Stale app pages must
+reload. Returning through the app replaces outdated open sessions; a Stripe
+checkout URL already open retains its previous settings until expiry. Existing
+subscriptions are never silently repriced or retaxed by this setting.
+Public pricing and the billing selector show the configured rate and full total.
+No VAT setting has been enabled on the user's behalf and no tax rate/payment was
+created by implementation tests. Actual Stripe checkout testing remains required.
+
+20% was identified as the UK standard rate, not confirmation of VAT registration.
+Do not enable tax collection or represent the prices as tax-inclusive/exclusive
+until applicable treatment is confirmed. Live charging is deliberately blocked.
+The intermittent database/router connection issue remains a launch blocker.
+No deployment, push, real charge, or changes to existing subscribers authorized
+by saving this configuration.

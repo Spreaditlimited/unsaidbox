@@ -30,7 +30,7 @@ export default async function Admin() {
       <header className="admin-heading"><div><p className="admin-eyebrow">COMMUNITY SAFETY</p><h1>Moderation</h1></div></header>
       <p className="notice">
         Private inboxes are not listed here. Review discovery requests and
-        public-content reports. All moderation changes are recorded. Each queue
+        public-content reports and sender-reported concerns about private follow-ups. Follow-up reports close the conversation immediately. All moderation changes are recorded. Each queue
         shows its latest 50 items; completing reviews brings older items into view.
       </p>
       <section className="dashboard-section">

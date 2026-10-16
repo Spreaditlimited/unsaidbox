@@ -1,3 +1,4 @@
+import {ThemePicker} from "./ThemePicker";
 import Link from "next/link";
 import { Brand } from "./Brand";
 import { logout } from "@/app/actions";
@@ -5,18 +6,25 @@ import { DashboardNav } from "./DashboardNav";
 import { Icon } from "./ui/Icon";
 import { avatarState } from "@/lib/avatar";
 import { ProfileAvatar } from "./ProfileAvatar";
+import { accountPlan } from '@/lib/plans';
+import { recordAccountActivity } from '@/lib/account-activity';
+import { MarketingPreferences } from './MarketingPreferences';
 export async function DashboardShell({
   children,
   name,
   section = "overview",
   accountId,
+  showMarketingPrompt = true,
 }: {
   children: React.ReactNode;
   name: string;
   section?: string;
   accountId: string;
+  showMarketingPrompt?: boolean;
 }) {
   const avatar = await avatarState(accountId);
+  const plan = await accountPlan(accountId);
+  recordAccountActivity(accountId, 'dashboard');
   return (
     <div className="workspace">
       <aside className="workspace-sidebar">
@@ -42,7 +50,8 @@ export async function DashboardShell({
           <span className="workspace-breadcrumb">
             My workspace <span>/</span> <strong>UnsaidBox</strong>
           </span>
-          <div className="workspace-account">
+          <div className="workspace-account"><ThemePicker/>
+            {plan.key === 'free' ? <Link href="/dashboard/billing#upgrade-pro" className="button small workspace-upgrade">Upgrade to Pro</Link> : null}
             <Link
               href="/dashboard/settings"
               aria-label="Manage profile photo"
@@ -63,6 +72,7 @@ export async function DashboardShell({
           </div>
         </header>
         <main id="main" className="dashboard workspace-main">
+          {showMarketingPrompt ? <MarketingPreferences accountId={accountId} banner /> : null}
           {children}
         </main>
       </div>

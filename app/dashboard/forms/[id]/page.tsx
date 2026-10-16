@@ -7,6 +7,7 @@ import type { FormQuestion } from "@/lib/form-templates";
 import { DashboardShell } from "@/components/DashboardShell";
 import { CopyLink } from "@/components/CopyLink";
 import { ActionForm, DeleteForm } from "@/components/ActionForm";
+import { followupsReady } from '@/lib/followups';
 import {
   changeFeedbackForm,
   deleteFeedbackForm,
@@ -57,6 +58,8 @@ export default async function FormResultsPage({
       _count: { _all: true },
     }),
   ]);
+  const conversations = entries.length && await followupsReady() ? await db().followupConversation.findMany({ where: { accountId: a.id, entryId: { in: entries.map(e => e.id) } }, select: { id: true, entryId: true } }) : [];
+  const followupByEntry = new Map(conversations.map(c => [c.entryId, c.id]));
   return (
     <DashboardShell accountId={a.id} name={a.displayName} section="forms">
       <Link className="fine" href="/dashboard/forms">
@@ -92,6 +95,7 @@ export default async function FormResultsPage({
             : "Your form is not collecting responses yet."}
         </p>
       )}
+      <div className="action-row"><Link className="button" href={`/dashboard/forms/${id}/insights`}>View feedback insights →</Link><Link className="button secondary" href={`/dashboard/exports?source=forms&sourceId=${id}&layout=WIDE`}>Export form submissions</Link></div>
       <section className="panel feedback-link-panel">
         <div>
           <span className="eyebrow">ONE LINK. HONEST ANSWERS.</span>
@@ -269,6 +273,7 @@ export default async function FormResultsPage({
                   );
                 })}
                 <footer>
+                  {followupByEntry.has(e.id) ? <Link className="button secondary" href={`/dashboard/follow-ups/${followupByEntry.get(e.id)}`}>Open private follow-up →</Link> : null}
                   <DeleteForm
                     action={deleteFeedbackEntry.bind(null, e.id)}
                     description="This will delete this response and all its answers."

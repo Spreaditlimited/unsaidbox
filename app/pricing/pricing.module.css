@@ -1,0 +1,60 @@
+.page { padding-top: 64px; padding-bottom: 48px; }
+.hero { text-align: center; padding: 24px 0 42px; }
+.hero > :global(.eyebrow) { justify-content: center; }
+.hero h1 { font-size: clamp(38px, 5vw, 68px); line-height: 1.12; letter-spacing: -.045em; margin: 20px 0 24px; }
+.hero h1 em { font-family: Georgia, serif; color: var(--indigo); font-weight: 400; }
+.hero > p:not(:global(.eyebrow)) { font-size: 17px; line-height: 1.8; color: var(--muted); }
+.promises { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px; margin-top: 28px; font-size: 12px; color: var(--muted); }
+.promises span::before { content: '✓'; color: var(--indigo); margin-right: 8px; }
+.plans { max-width: 1040px; margin: 0 auto; }
+.controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px 28px; margin-bottom: 24px; }
+.controls > div > span { display: block; text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+.segment { display: flex; padding: 4px; border: 1px solid var(--line); border-radius: 10px; background: var(--color-purple-bg); }
+.segment button { border: 1px solid transparent; min-width: 98px; min-height: 44px; padding: 10px 16px; border-radius: 7px; font: inherit; font-size: 13px; color: var(--muted); background: transparent; cursor: pointer; }
+.segment button[aria-pressed='true'] { border-color: var(--line); color: var(--indigo); background: var(--color-surface); box-shadow: 0 1px 3px var(--color-shadow-soft); }
+.segment button:focus-visible, .faq summary:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; }
+.launchNote { display: flex; gap: 9px; justify-content: center; align-items: baseline; font-size: 12px; color: var(--muted); text-align: center; margin: 0 0 26px; line-height: 1.7; }
+.dot { flex: 0 0 6px; height: 6px; border-radius: 50%; background: var(--color-accent-solid); }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.card { display: flex; flex-direction: column; padding: clamp(24px, 3vw, 40px); border: 1px solid var(--line); border-radius: 20px; background: var(--color-surface); }
+.pro { background: linear-gradient(155deg, var(--color-purple-bg), var(--color-surface) 65%); border-color: var(--color-border); box-shadow: 0 14px 48px var(--color-shadow-soft); }
+.planLabel { font-size: 10px; letter-spacing: .13em; font-weight: 600; color: var(--muted); }
+.pro .planLabel { color: var(--indigo); }
+.card h2 { font-size: 30px; letter-spacing: -.03em; margin: 14px 0 0; }
+.cardIntro { min-height: 142px; }
+.cardIntro p { color: var(--muted); font-size: 14px; line-height: 1.8; margin: 12px 0 0; max-width: 38ch; }
+.proTitle { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.proTitle > span { font-size: 11px; color: var(--indigo); border: 1px solid var(--color-border); padding: 6px 10px; border-radius: 20px; margin-top: 14px; }
+.price { margin: 26px 0; min-height: 116px; }
+.price strong { display: inline-block; font-size: clamp(40px, 4vw, 52px); font-weight: 500; letter-spacing: -.05em; line-height: 1.2; margin-right: 10px; }
+.price > span { font-size: 13px; color: var(--muted); }
+.price small { display: block; margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.price .unavailablePrice { font-size: 28px; letter-spacing: -.03em; }
+.card > :global(.button) { width: 100%; justify-content: center; min-height: 48px; }
+.card > button:disabled { background: var(--color-purple-bg); border-color: var(--color-border); color: var(--color-text-secondary); opacity: 1; cursor: not-allowed; }
+.card h3 { font-size: 13px; margin: 28px 0 16px; font-weight: 500; }
+.card ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+.card li { position: relative; padding-left: 24px; font-size: 14px; line-height: 1.65; }
+.card li::before { content: '✓'; position: absolute; left: 0; color: var(--indigo); }
+.card li strong { font-weight: 600; }
+.priceNote { margin: 20px auto 0; max-width: 76ch; text-align: center; font-size: 12px; color: var(--muted); line-height: 1.8; }
+.included { margin: 88px 0; padding: 40px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr 2fr; gap: 40px; }
+.page h2 { line-height: 1.25; }
+.included h2, .faq h2 { font-size: clamp(26px, 3vw, 36px); letter-spacing: -.035em; margin: 16px 0; }
+.includedGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.includedGrid article > span { color: var(--indigo); font-family: Georgia, serif; font-size: 24px; }
+.includedGrid h3 { font-size: 15px; font-weight: 500; margin: 18px 0 10px; }
+.includedGrid p, .faq p { font-size: 14px; line-height: 1.85; color: var(--muted); margin: 0; }
+.faq { display: grid; grid-template-columns: 1fr 1.65fr; gap: 56px; }
+.faq a { color: var(--indigo); text-underline-offset: 4px; }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { display: flex; justify-content: space-between; gap: 24px; padding: 22px 0; cursor: pointer; font-size: 15px; line-height: 1.6; list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary span { color: var(--indigo); font-size: 22px; line-height: 1; }
+.faq details[open] summary span { transform: rotate(45deg); }
+.faq details p { padding: 0 28px 24px 0; }
+.closing { text-align: center; padding: 56px 24px; background: var(--lavender); border-radius: 20px; margin-top: 80px; }
+.closing h2 { font-size: clamp(28px, 3vw, 40px); font-weight: 500; letter-spacing: -.035em; margin: 0 0 28px; }
+.closing p { font-size: 12px; margin: 20px 0 0; color: var(--muted); }
+@media (max-width: 1000px) { .included { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .page { padding-top: 24px; } .hero { padding-bottom: 32px; } .hero > p:not(:global(.eyebrow)) { font-size: 15px; } .cards, .faq, .includedGrid { grid-template-columns: minmax(0, 1fr); } .cardIntro { min-height: 0; } .price { min-height: 0; } .included { margin: 56px 0; gap: 24px; } .includedGrid { gap: 24px; } .faq { gap: 20px; } .closing { margin-top: 56px; } .promises { gap: 10px 18px; } }

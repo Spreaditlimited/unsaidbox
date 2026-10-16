@@ -10,7 +10,7 @@ export function DashboardNav({
   section: string;
 }) {
   const pathname = usePathname();
-  const active = pathname.startsWith("/dashboard/forms") ? "forms" : pathname.startsWith("/admin")
+  const active = pathname.startsWith('/dashboard/follow-ups') ? 'followups' : pathname.startsWith("/dashboard/billing") ? "billing" : pathname.startsWith("/dashboard/forms") ? "forms" : pathname.startsWith("/admin")
     ? "admin"
     : pathname.includes("/settings")
       ? "settings"
@@ -20,7 +20,6 @@ export function DashboardNav({
           ? "inbox"
           : section;
   const items = [
-    { id: "forms", label: "Forms & feedback", href: "/dashboard/forms", icon: "article" as const },
     {
       id: "overview",
       label: "Overview",
@@ -39,6 +38,10 @@ export function DashboardNav({
       href: "/dashboard?view=questions",
       icon: "question" as const,
     },
+    { id: "forms", label: "Forms & feedback", href: "/dashboard/forms", icon: "article" as const },
+    { id: 'followups', label: 'Private follow-ups', href: '/dashboard/follow-ups', icon: 'inbox' as const },
+    { id: "billing", label: "Plan & billing", href: "/dashboard/billing", icon: "payment" as const },
+    { id: 'exports', label: 'Export centre', href: '/dashboard/exports', icon: 'article' as const },
     {
       id: "settings",
       label: "Settings",

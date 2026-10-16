@@ -5,6 +5,7 @@ import { rateLimit } from "@/lib/auth";
 import { verifyCaptcha } from "@/lib/captcha.mjs";
 import { InputError } from "@/lib/security.mjs";
 import { updateBlogImage } from "@/lib/blog-image";
+import { readBlogCover } from "@/lib/blog-cloudinary.mjs";
 export const runtime = "nodejs";
 export const maxDuration = 180;
 export const dynamic = "force-dynamic";
@@ -13,7 +14,11 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
   const { id } = await params;
   const image = await db().blogImage.findUnique({ where: { postId: id } });
   if (!image) return new Response(null, { status: 404 });
-  return new Response(new Uint8Array(image.image), { headers: { "Content-Type": "image/webp", "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex" } });
+  try {
+    return new Response(new Uint8Array(await readBlogCover(image)), { headers: { "Content-Type": "image/webp", "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex" } });
+  } catch {
+    return new Response(null, { status: 503, headers: { "Cache-Control": "private, no-store", "Retry-After": "30", "X-Robots-Tag": "noindex" } });
+  }
 }
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const admin = await currentAdministrator();

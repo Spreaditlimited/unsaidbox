@@ -1,0 +1,87 @@
+/* Shared interface palette. Exported cards, artwork and provider frames own their colours. */
+:root {
+ color-scheme:light;
+ --color-page:#faf9f6;--color-surface:#fff;--color-surface-subtle:#f7f7fb;--color-surface-tint:#eeebfa;
+ --color-text:#202332;--color-text-secondary:#646572;--color-text-muted:#6c687a;
+ --color-border:#e4e2e9;--color-border-strong:#aaa3bd;
+ --color-accent:#5850b8;--color-accent-solid:#5850b8;--color-accent-hover:#48409b;--color-on-accent:#fff;--color-focus:#5850b8;
+ --color-inverse:#202332;--color-on-inverse:#fff;
+ --color-success-bg:#e6eee8;--color-success-text:#386b57;--color-success-border:#88af9b;--color-success-solid:#386b57;
+ --color-warning-bg:#f5ebdb;--color-warning-text:#80551f;--color-warning-border:#c5a578;--color-warning-solid:#80551f;
+ --color-danger-bg:#fff0f0;--color-danger-text:#942c37;--color-danger-border:#cf8b94;--color-danger-solid:#942c37;
+ --color-info-bg:#edf1fb;--color-info-text:#385d95;--color-info-border:#9bafcf;--color-info-solid:#385d95;
+ --color-purple-bg:#eeebfa;--color-purple-text:#5850b8;--color-purple-border:#b6a7dc;--color-purple-solid:#5850b8;
+ --color-shadow:rgba(32,35,50,.12);--color-shadow-soft:rgba(32,35,50,.05);--color-overlay:rgba(20,20,32,.55);
+}
+:root[data-theme='dark'] {
+ color-scheme:dark;
+ --color-page:#171722;--color-surface:#222230;--color-surface-subtle:#1d1d2a;--color-surface-tint:#2e2943;
+ --color-text:#f1eef8;--color-text-secondary:#c2bdcf;--color-text-muted:#b0a9c1;
+ --color-border:#454052;--color-border-strong:#7c718f;
+ --color-accent:#c7b8ff;--color-accent-solid:#6253ba;--color-accent-hover:#7363cc;--color-on-accent:#fff;--color-focus:#c7b8ff;
+ --color-inverse:#13131e;--color-on-inverse:#fff;
+ --color-success-bg:#20372e;--color-success-text:#a4dfbc;--color-success-border:#4d7b63;--color-success-solid:#386b57;
+ --color-warning-bg:#3b3020;--color-warning-text:#f1cf92;--color-warning-border:#8d7148;--color-warning-solid:#80551f;
+ --color-danger-bg:#40272e;--color-danger-text:#ffb7c0;--color-danger-border:#98606c;--color-danger-solid:#942c37;
+ --color-info-bg:#243247;--color-info-text:#b3d0ff;--color-info-border:#597aa8;--color-info-solid:#385d95;
+ --color-purple-bg:#2e2943;--color-purple-text:#c7b8ff;--color-purple-border:#85719f;--color-purple-solid:#6253ba;
+ --color-shadow:rgba(0,0,0,.34);--color-shadow-soft:rgba(0,0,0,.18);--color-overlay:rgba(0,0,0,.7);
+}
+:root { --paper:var(--color-page);--white:var(--color-surface);--ink:var(--color-text);--muted:var(--color-text-secondary);--indigo:var(--color-accent);--lavender:var(--color-purple-bg);--line:var(--color-border);--workspace-bg:var(--color-surface-subtle); }
+html,body { background:var(--color-page);color:var(--color-text); }
+input,textarea,button { color:inherit; }
+input::placeholder,textarea::placeholder { color:var(--color-text-muted);opacity:1; }
+::selection { background:var(--color-accent-solid);color:var(--color-on-accent); }
+:focus-visible { outline-color:var(--color-focus); }
+.button:not(.secondary):not(.destructive) { color:var(--color-on-accent); }
+.button.destructive { background:var(--color-danger-solid);color:var(--color-on-accent);border-color:var(--color-danger-solid); }
+.button.destructive:hover:not(:disabled) { background:var(--color-danger-solid);filter:brightness(.9); }
+.appearance-picker { display:inline-flex;flex:0 0 auto;min-width:0;color:var(--ink); }
+.appearance-picker .picker-field { margin:0;gap:0;min-width:0; }
+.appearance-picker .picker-field > label { position:absolute;width:1px;height:1px;padding:0;margin:-1px;clip:rect(0,0,0,0);overflow:hidden;white-space:nowrap; }
+.appearance-picker .picker-trigger { width:44px;min-width:44px;min-height:44px;padding:10px;font-size:12px;line-height:1.5;margin:0;border:0;background:transparent;color:var(--ink); }
+.auth-appearance { display:flex;justify-content:flex-end;margin-bottom:20px; }
+.standalone-appearance { display:flex;justify-content:flex-end;margin-bottom:20px; }
+.public-header-actions { flex-shrink:0; }
+/* Fixed export swatches describe the exported image, regardless of interface theme. */
+.swatch.paper { background:#faf9f6; }.swatch.lavender { background:#eeebfa; }.swatch.ink { background:#202332; }
+.brand > svg { color:var(--color-accent-solid); }
+/* Form accents can be bright text in dark mode, with separate readable button fills. */
+.feedback-theme-lavender { --form-solid:#5850b8; }
+.feedback-theme-sage { --form-solid:#386b57; }
+.feedback-theme-sand { --form-solid:#80551f; }
+.feedback-public .app-form > .button { background:var(--form-solid,var(--color-accent-solid));border-color:var(--form-solid,var(--color-accent-solid));color:var(--color-on-accent); }
+html[data-theme-changing] *,html[data-theme-changing] *::before,html[data-theme-changing] *::after { transition:none!important; }
+@media(max-width:1100px) { .public-header-actions > .button { display:none; } }
+@media(max-width:600px) { .workspace-account { flex-wrap:wrap; } }
+@media print {
+ .appearance-picker,.auth-appearance,.standalone-appearance { display:none!important; }
+ :root[data-theme='dark'] { color-scheme:light;
+ --color-page:#faf9f6;--color-surface:#fff;--color-surface-subtle:#f7f7fb;--color-surface-tint:#eeebfa;
+ --color-text:#202332;--color-text-secondary:#646572;--color-text-muted:#6c687a;--color-border:#e4e2e9;--color-border-strong:#aaa3bd;
+ --color-accent:#5850b8;--color-accent-solid:#5850b8;--color-accent-hover:#48409b;--color-on-accent:#fff;--color-focus:#5850b8;
+ --color-inverse:#202332;--color-on-inverse:#fff;
+ --color-success-bg:#e6eee8;--color-success-text:#386b57;--color-success-border:#88af9b;--color-success-solid:#386b57;
+ --color-warning-bg:#f5ebdb;--color-warning-text:#80551f;--color-warning-border:#c5a578;--color-warning-solid:#80551f;
+ --color-danger-bg:#fff0f0;--color-danger-text:#942c37;--color-danger-border:#cf8b94;--color-danger-solid:#942c37;
+ --color-info-bg:#edf1fb;--color-info-text:#385d95;--color-info-border:#9bafcf;--color-info-solid:#385d95;
+ --color-purple-bg:#eeebfa;--color-purple-text:#5850b8;--color-purple-border:#b6a7dc;--color-purple-solid:#5850b8;
+ --color-shadow:rgba(32,35,50,.12);--color-shadow-soft:rgba(32,35,50,.05);--color-overlay:rgba(20,20,32,.55);
+ }
+}
+
+.sr-only { position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0; }
+
+/* Effikos appearance control: compact icon trigger and labelled icon menu. */
+.appearance-picker .picker-trigger { width:44px;min-width:44px;min-height:44px;padding:10px;border:0;border-radius:8px;background:transparent;justify-content:center;box-shadow:none; }
+.appearance-picker .picker-trigger:hover { background:transparent;color:var(--color-accent); }
+.appearance-menu { width:190px;min-width:190px;border-color:var(--color-border-strong);border-radius:12px;padding:6px; }
+.appearance-menu .picker-option { min-height:44px;display:flex;gap:10px;border-radius:8px;padding:10px;font-size:14px; }
+.appearance-menu .picker-option[data-state='checked'] { background:var(--color-surface-tint);color:var(--color-accent); }
+.appearance-menu .picker-check { margin-left:auto; }
+.appearance-menu .picker-hint { display:block;padding:8px 10px;font-size:12px;line-height:1.5;color:var(--color-text-secondary); }
+
+.appearance-picker .picker-trigger[data-state="open"] { border:0;box-shadow:none; }
+.appearance-picker .picker-trigger:focus:not(:focus-visible) { outline:none; }
+
+.appearance-picker .picker-trigger:focus-visible { outline:none;box-shadow:none;color:var(--color-accent); }

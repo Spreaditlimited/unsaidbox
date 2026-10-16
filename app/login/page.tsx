@@ -3,14 +3,21 @@ import { AuthShell } from "@/components/AuthShell";
 import { AuthField } from "@/components/AuthField";
 import { ActionForm } from "@/components/ActionForm";
 import { login } from "@/app/actions";
+import { SocialSignIn } from '@/components/SocialSignIn';
+import { appleLoginError } from '@/lib/apple-auth-policy.mjs';
+import { googleLoginError } from '@/lib/google-auth-policy.mjs';
 export const metadata = { title: "Sign in" };
-export default function Login() {
+export default async function Login({ searchParams }: { searchParams: Promise<{ google?: string; apple?: string }> }) {
+  const params = await searchParams;
+  const message = googleLoginError(params.google) || appleLoginError(params.apple);
   return (
     <AuthShell>
       <header className="auth-form-header">
         <h1>Welcome back</h1>
         <p>Please enter your details to sign in.</p>
       </header>
+      {message ? <p className="form-error" role="alert">{message}</p> : null}
+      <SocialSignIn />
       <ActionForm action={login} label="Sign in" captchaAction="login">
         <AuthField
           label="Email"
