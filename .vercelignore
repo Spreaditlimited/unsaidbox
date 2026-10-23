@@ -22,4 +22,5 @@ scripts
 socials
 .data
 *.txt
+!public/ads.txt
 AGENTS.md
